@@ -8,7 +8,7 @@ info:
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
-  version: 1.0.0
+  version: 1.0.1
 paths:
   /api/health/:
     get:
@@ -21,6 +21,32 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Health'
+  api/config/:
+    get:
+      summary: Get API Configuration Information
+      operationId: getConfig
+      parameters:
+        - name: flat_settings
+          in: query
+          description: Whether to return settings in flat form.
+          required: false
+          schema:
+            type: boolean
+        - name: include_defaults
+          in: query
+          description: Whether to include default settings.
+          required: false
+          schema:
+            type: boolean
+        - name: cluster_manager_timeout
+          in: query
+          description: THe maount of time to wait for a resposne form the cluster manager node. Default is 30 seconds.
+          required: false
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: Successful operation
 components:
   schemas:
     Health:
