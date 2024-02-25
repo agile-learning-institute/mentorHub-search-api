@@ -14,6 +14,12 @@ paths:
     get:
       summary: Opensearch health endpoint
       operationId: getHealth
+      parameters:
+      - name: level
+        in: query
+        description: "The level of awareness attributes (e.g. /api/health?level=awareness_attributes)"
+        schema:
+          type: string
       responses:
         '200':
           description: Successful operation
@@ -28,19 +34,19 @@ paths:
       parameters:
         - name: flat_settings
           in: query
-          description: Whether to return settings in flat form.
+          description: "Whether to return settings in flat form."
           required: false
           schema:
             type: boolean
         - name: include_defaults
           in: query
-          description: Whether to include default settings.
+          description: "Whether to include default settings."
           required: false
           schema:
             type: boolean
         - name: cluster_manager_timeout
           in: query
-          description: THe maount of time to wait for a resposne form the cluster manager node. Default is 30 seconds.
+          description: "The amount of time to wait for a resposne form the cluster manager node. Default is 30 seconds."
           required: false
           schema:
             type: boolean
