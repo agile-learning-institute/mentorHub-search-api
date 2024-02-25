@@ -1,0 +1,19 @@
+openapi: 3.0.3
+info:
+  title: search API
+  description: |-
+    This is a super simple API for searching on mentorhub
+  contact:
+    email: devs@agile-learning.institute
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.0
+paths:
+  /api/health/:
+    get:
+      summary: Promethius Healthcheck endpoint
+      operationId: getHealth
+      responses:
+        '200':
+          description: Successful operation
