@@ -8,11 +8,11 @@ info:
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
-  version: 1.0.1
+  version: 1.0.2
 paths:
   /api/health/:
     get:
-      summary: Opensearch health endpoint
+      summary: Opensearch Health Endpoint
       operationId: getHealth
       parameters:
       - name: level
@@ -53,6 +53,35 @@ paths:
       responses:
         '200':
           description: Successful operation
+  api/search/:
+    post:
+      summary: Search Opensearch database
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SearchQuery'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              example:
+                error: "Invalid request. Check your query parameters."
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              example:
+                error: "Internal server error. Please try again later."
+
 components:
   schemas:
     Health:
@@ -119,3 +148,87 @@ components:
                 type: integer
               weight:
                 type: integer
+    SearchQuery:
+      type: object
+      properties:
+        name:
+          description: |
+            The "name" field for partial matching. It includes a "keyword" subfield
+            with type "keyword" for exact matching (optional).
+          type: object
+          properties:
+            keyword:
+              type: string
+              ignore_above: 256
+        collection:
+          description: |
+            The "collection" field for partial matching. It includes a "keyword" subfield
+            with type "keyword" for exact matching (optional).
+          type: object
+          properties:
+            keyword:
+              type: string
+              ignore_above: 256
+        size:
+          description: |
+            The number of hits to return in the response. Must be between 1 and 1000.
+            Default is 20.
+          type: integer
+          minimum: 1
+          maximum: 1000
+          default: 20
+        from:
+          description: |
+            The starting index from which to fetch the results for pagination.
+            Must be greater than or equal to 0. Default is 0.
+          type: integer
+          minimum: 0
+          default: 0
+    SearchResponse:
+      type: object
+      properties:
+        took:
+          type: integer
+        timed_out:
+          type: boolean
+        _shards:
+          type: object
+          properties:
+            total:
+              type: integer
+            successful:
+              type: integer
+            skipped:
+              type: integer
+            failed:
+              type: integer
+        hits:
+          type: object
+          properties:
+            total:
+              type: object
+              properties:
+                value:
+                  type: integer
+                relation:
+                  type: string
+            max_score:
+              type: number
+            hits:
+              type: array
+              items:
+                type: object
+                properties:
+                  _index:
+                    type: string
+                  _id:
+                    type: string
+                  _score:
+                    type: number
+                  _source:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                      collection:
+                        type: string
