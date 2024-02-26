@@ -2,10 +2,11 @@
 
 # <<TODO:domain>>-<<TODO:component>>
 
+## Overview
+
 This is repository contains <<TODO:service-description>>
-
 [Here](https://github.com/orgs/agile-learning-institute/repositories?q=mentorhub-&type=all&sort=name) are all of the repositories in the [mentorHub](https://github.com/agile-learning-institute/mentorhub/tree/main) system
-
+The OpenAPI specifications for the api can be found in the ``docs`` folder, and are served [here](https://agile-learning-institute.github.io/mentorHub-search-api/)
 ## Prerequisites
 
 - [Docker Desktop](https://www.docker.com/products/docker-desktop/)
