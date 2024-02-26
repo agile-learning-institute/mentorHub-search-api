@@ -1,0 +1,234 @@
+openapi: 3.0.3
+info:
+  title: search API
+  description: |-
+    This is a super simple API for searching on mentorhub
+  contact:
+    email: devs@agile-learning.institute
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.2
+paths:
+  /api/health/:
+    get:
+      summary: Opensearch Health Endpoint
+      operationId: getHealth
+      parameters:
+      - name: level
+        in: query
+        description: "The level of awareness attributes (e.g. /api/health?level=awareness_attributes)"
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Health'
+  api/config/:
+    get:
+      summary: Get API Configuration Information
+      operationId: getConfig
+      parameters:
+        - name: flat_settings
+          in: query
+          description: "Whether to return settings in flat form."
+          required: false
+          schema:
+            type: boolean
+        - name: include_defaults
+          in: query
+          description: "Whether to include default settings."
+          required: false
+          schema:
+            type: boolean
+        - name: cluster_manager_timeout
+          in: query
+          description: "The amount of time to wait for a resposne form the cluster manager node. Default is 30 seconds."
+          required: false
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: Successful operation
+  api/search/:
+    post:
+      summary: Search Opensearch database
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SearchQuery'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              example:
+                error: "Invalid request. Check your query parameters."
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              example:
+                error: "Internal server error. Please try again later."
+
+components:
+  schemas:
+    Health:
+      type: object
+      properties:
+          clusterName:
+            description: "The name of the cluster."
+            type: string
+          status:
+            description: "The cluster health status, which represents the state of shard allocation in the cluster. May be green, yellow, or red."
+            type: string
+          numberOfNodes:
+            description: "The number of nodes in the cluster."
+            type: integer
+          numberOfDataNodes: 
+            description: "The number of data nodes in the cluster."
+            type: integer
+          discoveredClusterManager:
+            description: "Specifies whether the cluster manager is discovered."
+            type: boolean
+          activePrimaryShards:
+            description: "The number of active primary shards."
+            type: integer
+          activeShards:
+            description: "The total number of active shards, including primary and replica shards."
+            type: integer
+          relocatingShards:
+            description: "The number of relocating shards."
+            type: integer
+          initializingShards:
+            description: "The number of initializing shards."
+            type: integer
+          unassignedShards:
+            description: "The number of unassigned shards."
+            type: integer
+          delayedUnassignedShards:
+            description: "The number of delayed unassigned shards."
+            type: integer
+          numberOfPendingTasks:
+            description: "The number of pending tasks in the cluster."
+            type: integer
+          numberOfInFlightFetch:
+            description: "The number of unfinished fetches."
+            type: integer
+          taskMaxWaitingInQueueMillis:
+            description: "The maximum wait time for all tasks waiting to be performed, in milliseconds."
+            type: integer
+          activeShardsPercentAsNumber:
+            description: "The percentage of active shards in the cluster."
+            type: number
+          awarenessAttributes:
+            description: "Contains cluster health information for each awareness attribute."
+            type: object
+            properties:
+              active_shards:
+                type: integer
+              initializing_shards:
+                type: integer
+              relocating_shards:
+                type: integer
+              unassigned_shards:
+                type: integer
+              data_nodes:
+                type: integer
+              weight:
+                type: integer
+    SearchQuery:
+      type: object
+      properties:
+        name:
+          description: |
+            The "name" field for partial matching. It includes a "keyword" subfield
+            with type "keyword" for exact matching (optional).
+          type: object
+          properties:
+            keyword:
+              type: string
+              ignore_above: 256
+        collection:
+          description: |
+            The "collection" field for partial matching. It includes a "keyword" subfield
+            with type "keyword" for exact matching (optional).
+          type: object
+          properties:
+            keyword:
+              type: string
+              ignore_above: 256
+        size:
+          description: |
+            The number of hits to return in the response. Must be between 1 and 1000.
+            Default is 20.
+          type: integer
+          minimum: 1
+          maximum: 1000
+          default: 20
+        from:
+          description: |
+            The starting index from which to fetch the results for pagination.
+            Must be greater than or equal to 0. Default is 0.
+          type: integer
+          minimum: 0
+          default: 0
+    SearchResponse:
+      type: object
+      properties:
+        took:
+          type: integer
+        timed_out:
+          type: boolean
+        _shards:
+          type: object
+          properties:
+            total:
+              type: integer
+            successful:
+              type: integer
+            skipped:
+              type: integer
+            failed:
+              type: integer
+        hits:
+          type: object
+          properties:
+            total:
+              type: object
+              properties:
+                value:
+                  type: integer
+                relation:
+                  type: string
+            max_score:
+              type: number
+            hits:
+              type: array
+              items:
+                type: object
+                properties:
+                  _index:
+                    type: string
+                  _id:
+                    type: string
+                  _score:
+                    type: number
+                  _source:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                      collection:
+                        type: string
