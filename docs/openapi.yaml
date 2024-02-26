@@ -151,24 +151,6 @@ components:
     SearchQuery:
       type: object
       properties:
-        name:
-          description: |
-            The "name" field for partial matching. It includes a "keyword" subfield
-            with type "keyword" for exact matching (optional).
-          type: object
-          properties:
-            keyword:
-              type: string
-              ignore_above: 256
-        collection:
-          description: |
-            The "collection" field for partial matching. It includes a "keyword" subfield
-            with type "keyword" for exact matching (optional).
-          type: object
-          properties:
-            keyword:
-              type: string
-              ignore_above: 256
         size:
           description: |
             The number of hits to return in the response. Must be between 1 and 1000.
@@ -184,6 +166,28 @@ components:
           type: integer
           minimum: 0
           default: 0
+        query:
+          description: "Query object"
+          type: object
+          properties:
+            name:
+              description: |
+                The "name" field for partial matching. It includes a "keyword" subfield
+                with type "keyword" for exact matching (optional).
+              type: object
+              properties:
+                keyword:
+                  type: string
+                  ignore_above: 256
+            collection:
+              description: |
+                The "collection" field for partial matching. It includes a "keyword" subfield
+                with type "keyword" for exact matching (optional).
+              type: object
+              properties:
+                keyword:
+                  type: string
+                  ignore_above: 256
     SearchResponse:
       type: object
       properties:
