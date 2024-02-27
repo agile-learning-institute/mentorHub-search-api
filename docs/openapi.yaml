@@ -8,7 +8,7 @@ info:
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
-  version: 1.0.2
+  version: 1.0.3
 paths:
   /api/health/:
     get:
@@ -54,17 +54,23 @@ paths:
         '200':
           description: Successful operation
   api/search/:
-    post:
+    get:
       summary: Search Opensearch database
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/SearchQuery'
+      parameters:
+        - name: query
+          in: header
+          description: "Search query value"
+          required: true
+          schema:
+            type: string
       responses:
         '200':
           description: Successful response
+          headers:
+            Link:
+              description: "Links to the next and previous pages for infinite scroll"
+              schema:
+                type: string
           content:
             application/json:
               schema:
@@ -148,46 +154,6 @@ components:
                 type: integer
               weight:
                 type: integer
-    SearchQuery:
-      type: object
-      properties:
-        size:
-          description: |
-            The number of hits to return in the response. Must be between 1 and 1000.
-            Default is 20.
-          type: integer
-          minimum: 1
-          maximum: 1000
-          default: 20
-        from:
-          description: |
-            The starting index from which to fetch the results for pagination.
-            Must be greater than or equal to 0. Default is 0.
-          type: integer
-          minimum: 0
-          default: 0
-        query:
-          description: "Query object"
-          type: object
-          properties:
-            name:
-              description: |
-                The "name" field for partial matching. It includes a "keyword" subfield
-                with type "keyword" for exact matching (optional).
-              type: object
-              properties:
-                keyword:
-                  type: string
-                  ignore_above: 256
-            collection:
-              description: |
-                The "collection" field for partial matching. It includes a "keyword" subfield
-                with type "keyword" for exact matching (optional).
-              type: object
-              properties:
-                keyword:
-                  type: string
-                  ignore_above: 256
     SearchResponse:
       type: object
       properties:
