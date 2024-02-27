@@ -10,7 +10,7 @@ info:
     url: http://www.apache.org/licenses/LICENSE-2.0.html
   version: 1.0.3
 paths:
-  api/search/:
+  /api/search/:
     get:
       summary: Search Opensearch database
       parameters:
@@ -61,7 +61,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Health'
-  api/config/:
+  /api/config/:
     get:
       summary: Get API Configuration Information
       operationId: getConfig
