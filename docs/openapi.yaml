@@ -10,6 +10,40 @@ info:
     url: http://www.apache.org/licenses/LICENSE-2.0.html
   version: 1.0.3
 paths:
+api/search/:
+    get:
+      summary: Search Opensearch database
+      parameters:
+        - name: query
+          in: header
+          description: "Search query value"
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          headers:
+            Link:
+              description: "Links to the next and previous pages for infinite scroll"
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              example:
+                error: "Invalid request. Check your query parameters."
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              example:
+                error: "Internal server error. Please try again later."
   /api/health/:
     get:
       summary: Opensearch Health Endpoint
@@ -53,40 +87,7 @@ paths:
       responses:
         '200':
           description: Successful operation
-  api/search/:
-    get:
-      summary: Search Opensearch database
-      parameters:
-        - name: query
-          in: header
-          description: "Search query value"
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Successful response
-          headers:
-            Link:
-              description: "Links to the next and previous pages for infinite scroll"
-              schema:
-                type: string
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SearchResponse'
-        '400':
-          description: Bad Request
-          content:
-            application/json:
-              example:
-                error: "Invalid request. Check your query parameters."
-        '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              example:
-                error: "Internal server error. Please try again later."
+  
 
 components:
   schemas:
