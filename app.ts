@@ -27,8 +27,11 @@ app.get('/', (req, res) =>
 
 interface queryBody
 {
-    name: {
-        keyword: string;
+    query: {
+        query_string: {
+            query: string;
+            [key: string]: string | undefined;
+        };
     };
     size: number;
     from: number;
@@ -40,8 +43,11 @@ app.get('/api/search', async (req, res) =>
         const queryString = req.headers.query as string;
         //structure the opensearch query
         const queryBody: queryBody = {
-            name: {
-                keyword: queryString,
+            query: {
+                query_string: {
+                    query: `*${queryString}*`,
+                },
+
             },
             size: 5,
             from: 0,
@@ -52,9 +58,8 @@ app.get('/api/search', async (req, res) =>
             index: "search-index",
             body: queryBody,
         });
-
         //respond with opensearch response
-        res.send(`found: ${searchRes}\n`);
+        res.status(200).json(searchRes);
     }
     catch (error) {
         console.error(error);
