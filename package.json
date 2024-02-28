@@ -1,5 +1,9 @@
 {
+  "scripts": {
+    "start": "nodemon server.ts"
+  },
   "devDependencies": {
+    "@types/express": "^4.17.21",
     "@types/node": "^20.11.21",
     "nodemon": "^3.1.0",
     "ts-node": "^10.9.2",
