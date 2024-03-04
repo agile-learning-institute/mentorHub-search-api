@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "start": "nodemon app.ts",
+    "start": "nodemon src/server.ts",
     "lint": "eslint . --ext .ts"
   },
   "devDependencies": {
