@@ -52,4 +52,29 @@ app.get('/api/search', async (req, res) =>
     }
 });
 
+app.get('/api/health', async (req, res) =>
+{
+    const index = req.query.index as string | undefined;
+
+    try {
+        const clusterHealth = await getClusterHealth(index);
+        res.status(200).json(clusterHealth);
+    } catch (error) {
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+async function getClusterHealth(index: string | undefined)
+{
+    try {
+        const response = await client.cluster.health({ index });
+        const clusterHealth = response.body;
+        console.log('Cluster Health:', clusterHealth);
+        return clusterHealth;
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+
 export default app;

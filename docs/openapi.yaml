@@ -49,9 +49,9 @@ paths:
       summary: Opensearch Health Endpoint
       operationId: getHealth
       parameters:
-      - name: level
+      - name: index
         in: query
-        description: "The level of awareness attributes (e.g. /api/health?level=awareness_attributes)"
+        description: "The level of awareness attributes (e.g. /api/health?index=search-index)"
         schema:
           type: string
       responses:
@@ -139,22 +139,6 @@ components:
           activeShardsPercentAsNumber:
             description: "The percentage of active shards in the cluster."
             type: number
-          awarenessAttributes:
-            description: "Contains cluster health information for each awareness attribute."
-            type: object
-            properties:
-              active_shards:
-                type: integer
-              initializing_shards:
-                type: integer
-              relocating_shards:
-                type: integer
-              unassigned_shards:
-                type: integer
-              data_nodes:
-                type: integer
-              weight:
-                type: integer
     SearchResponse:
       type: object
       properties:
