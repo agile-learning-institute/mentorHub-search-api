@@ -2,12 +2,16 @@ import "dotenv/config";
 import express from "express";
 import { OpensearchClient, Initialize } from "./client";
 import QueryBody from "./querybody";
+import { collectDefaultMetrics, register } from "prom-client";
+import createError from "http-errors";
 
 const app = express();
-
 const client = OpensearchClient;
 Initialize(client);
 
+collectDefaultMetrics({ register });
+
+register.setDefaultLabels({ app: 'opensearch-api' });
 
 
 app.get('/', (req, res) =>
@@ -18,6 +22,9 @@ app.get('/', (req, res) =>
 app.get('/api/search', async (req, res) =>
 {
     try {
+        if (!req.headers.query || typeof req.headers.query !== 'string') {
+            throw createError(400, 'Bad Request: Missing or invalid "query" header');
+        }
         const queryString = req.headers.query as string;
         //structure the opensearch query
         const queryBody: QueryBody = new QueryBody(queryString, 5, 0);
@@ -36,27 +43,17 @@ app.get('/api/search', async (req, res) =>
 
 app.get('/api/health', async (req, res) =>
 {
-    const index = req.query.index as string | undefined;
-
     try {
-        const clusterHealth = await getClusterHealth(index);
-        res.status(200).json(clusterHealth);
-    } catch (error) {
-        res.status(500).json({ error: 'Internal Server Error' });
-    }
-});
+        const metrics = await register.metrics();
+        res.status(200);
+        res.set('Content-Type', register.contentType);
+        res.end(metrics);
 
-async function getClusterHealth(index: string | undefined)
-{
-    try {
-        const response = await client.cluster.health({ index });
-        const clusterHealth = response.body;
-        console.log('Cluster Health:', clusterHealth);
-        return clusterHealth;
     } catch (error) {
         console.error(error);
+        throw createError(500, 'Internal Server Error');
     }
-}
+});
 
 
 export default app;
