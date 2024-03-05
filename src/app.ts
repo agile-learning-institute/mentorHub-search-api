@@ -3,7 +3,8 @@ import express from "express";
 import { OpensearchClient, Initialize } from "./client";
 import QueryBody from "./querybody";
 import { collectDefaultMetrics, register } from "prom-client";
-import createError from "http-errors";
+import createHttpError from "http-errors";
+import { errorHandler } from "./middleware/errorHandler";
 
 const app = express();
 const client = OpensearchClient;
@@ -19,11 +20,12 @@ app.get('/', (req, res) =>
     res.send('Express + TypeScript Server');
 });
 
-app.get('/api/search', async (req, res) =>
+app.get('/api/search', async (req, res, next) =>
 {
     try {
+        //check if we recieved the query header
         if (!req.headers.query || typeof req.headers.query !== 'string') {
-            throw createError(400, 'Bad Request: Missing or invalid "query" header');
+            throw createHttpError(400, 'Bad Request: Missing or invalid "query" header');
         }
         const queryString = req.headers.query as string;
         //structure the opensearch query
@@ -38,10 +40,11 @@ app.get('/api/search', async (req, res) =>
     }
     catch (error) {
         console.error(error);
+        next(error);
     }
 });
 
-app.get('/api/health', async (req, res) =>
+app.get('/api/health', async (req, res, next) =>
 {
     try {
         const metrics = await register.metrics();
@@ -51,9 +54,10 @@ app.get('/api/health', async (req, res) =>
 
     } catch (error) {
         console.error(error);
-        throw createError(500, 'Internal Server Error');
+        next(error);
     }
 });
 
+app.use(errorHandler);
 
 export default app;
