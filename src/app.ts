@@ -1,4 +1,5 @@
 import "dotenv/config";
+import env from "../util/validateEnv";
 import express from "express";
 import { OpensearchClient, Initialize } from "./client";
 import QueryBody from "./querybody";
@@ -32,7 +33,7 @@ app.get('/api/search', async (req, res, next) =>
         const queryBody: QueryBody = new QueryBody(queryString, 5, 0);
         //actually use the query
         const searchRes = await client.search({
-            index: "search-index",
+            index: env.INDEX_NAME,
             body: queryBody
         });
         //respond with opensearch response

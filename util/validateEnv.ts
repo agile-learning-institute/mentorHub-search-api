@@ -7,5 +7,5 @@ export default cleanEnv(process.env, {
     PROTOCOL: str(),
     AUTH: str(),
     OPENSEARCH_PORT: port(),
-    INDEXNAME: str(),
+    INDEX_NAME: str(),
 });
