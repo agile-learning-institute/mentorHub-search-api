@@ -6,6 +6,7 @@ import QueryBody from "./querybody";
 import { collectDefaultMetrics, register } from "prom-client";
 import createHttpError from "http-errors";
 import { errorHandler } from "./middleware/errorHandler";
+import { Config } from "./config";
 
 const app = express();
 const client = OpensearchClient;
@@ -58,6 +59,17 @@ app.get('/api/health', async (req, res, next) =>
         next(error);
     }
 });
+
+app.get('/api/config', async (req, res, next) => {
+    try {
+        const config = new Config();
+        res.status(200).json(config);
+    }
+    catch (error) {
+        console.error(error);
+        next(error);
+    }
+})
 
 app.use(errorHandler);
 
