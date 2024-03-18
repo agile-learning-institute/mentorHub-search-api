@@ -1,5 +1,5 @@
 import fs from "fs";
-import { CONNECTION_STRING } from "../util/validateEnv";
+import env from "../util/validateEnv";
 interface ConfigItem
 {
     name: string;
@@ -22,7 +22,7 @@ export class Config
     private static readonly versionMajor: string = "1";
     private static readonly versionMinor: string = "0";
     private static readonly defaultConfigFolder: string = "./";
-    private static readonly defaultConnectionString: string = CONNECTION_STRING;
+    private static readonly defaultConnectionString: string = env.CONNECTION_STRING;
     private static readonly defaultDatabaseName: string = "N/A";
     private static readonly defaultPort: string = "8081";
     private static readonly defaultTimeout: number = 10;
