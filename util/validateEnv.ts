@@ -1,8 +1,7 @@
 import { cleanEnv, makeValidator } from "envalid";
-import { port, str } from "envalid";
+import { port, str, num } from "envalid";
 
-const connectionStringValidator = makeValidator((value: string | undefined) =>
-{
+const connectionStringValidator = makeValidator((value: string | undefined) => {
     if (value === undefined) {
         return `${process.env.OPENSEARCH_PROTOCOL}://${process.env.OPENSEARCH_AUTH}@${process.env.OPENSEARCH_HOST}:${process.env.OPENSEARCH_PORT}`;
     }
@@ -17,4 +16,5 @@ export default cleanEnv(process.env, {
     OPENSEARCH_PORT: port(),
     INDEX_NAME: str(),
     CONNECTION_STRING: connectionStringValidator(),
+    CONNECTION_TIMEOUT: num()
 });

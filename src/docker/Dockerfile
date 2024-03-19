@@ -31,4 +31,4 @@ ENV CONNECTION_STRING=http://admin:admin@mentorhub-searchdb:9200
 WORKDIR /app
 
 COPY --from=build /app/dist .
-ENTRYPOINT ["/bin/sh", "-c", "/app/entrypoint.sh"]
+ENTRYPOINT ["node", "bundle.js"]
