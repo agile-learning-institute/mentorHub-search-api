@@ -42,16 +42,16 @@ After that command completes successfully you can verify it worked successfully 
 
 ### Get search results
 ```bash
-curl -X GET "http://admin:admin@localhost:9200/api/search" -H  "accept: application/json" -H  "query: <your-query>"
+curl -X GET "http://admin:admin@localhost:8081/api/search/" -H  "accept: application/json" -H  "query: <your-query>"
 ```
 
 ### Get API health
 
 ```bash
-curl -X GET "http://admin:admin@localhost:9200/api/health" -H  "accept: */*"
+curl -X GET "http://admin:admin@localhost:8081/api/health/" -H  "accept: */*"
 ```
-testing /api/config endpoint
+### Get config information
 
 ```bash
-curl -X GET "http://admin:admin@localhost:9200/api/config" -H  "accept: */* "
+curl -X GET "http://admin:admin@localhost:8081/api/config/" -H  "accept: */* "
 ```
