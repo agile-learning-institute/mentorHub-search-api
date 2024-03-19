@@ -20,7 +20,7 @@ RUN BRANCH=$(git rev-parse --abbrev-ref HEAD) && \
 FROM node:21-alpine as deploy
 
 ENV OPENSEARCH_PROTOCOL=http
-ENV OPESNEARCH_HOST=localhost
+ENV OPENSEARCH_HOST=localhost
 ENV OPENSEARCH_AUTH=admin:admin
 ENV API_PORT=8081
 ENV OPENSEARCH_PORT=9200
