@@ -111,3 +111,28 @@ components:
                         type: string
                       collection:
                         type: string
+      Config:
+        type: object
+        properties:
+          apiVersion:
+            type: string
+            description: Semantic Version Number
+          ConfigItems:
+            type: array
+            items:
+              type: object
+              properties:
+                name:
+                  description: Conf Item Name (Env Var Name, File Name)
+                  type: string
+                value:
+                  description: The value for that config item
+                  type: string
+                from:
+                  description: Where the value was found
+                  type: string
+                  enum:
+                    - default
+                    - environment
+                    - file
+

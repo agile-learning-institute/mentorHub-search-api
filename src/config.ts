@@ -1,12 +1,14 @@
 import fs from "fs";
 import env from "../util/validateEnv";
-interface ConfigItem {
+interface ConfigItem
+{
     name: string;
     value: string;
     from: string;
 }
 
-export class Config {
+export class Config
+{
     configItems: ConfigItem[] = [];
     patch: string = " ";
     configFolder: string = " ";
@@ -20,12 +22,13 @@ export class Config {
     private static readonly versionMajor: string = "1";
     private static readonly versionMinor: string = "0";
     private static readonly defaultConfigFolder: string = "./";
-    private static readonly defaultConnectionString: string = env.PROTOCOL + "://" + env.AUTH + "@" + env.HOST + ":" + env.OPENSEARCH_PORT;
+    private static readonly defaultConnectionString: string = env.CONNECTION_STRING;
     private static readonly defaultDatabaseName: string = "N/A";
     private static readonly defaultPort: string = "8081";
     private static readonly defaultTimeout: number = 10;
 
-    constructor() {
+    constructor()
+    {
         this.patch = this.findStringValue("PATCH_LEVEL", "LocalDev", false);
         this.configFolder = this.findStringValue("CONFIG_FOLDER", Config.defaultConfigFolder, false);
         this.connectionString = this.findStringValue("CONNECTION_STRING", Config.defaultConnectionString, true);
@@ -35,7 +38,8 @@ export class Config {
         this.ApiVersion = Config.versionMajor + "." + Config.versionMinor + "." + this.patch;
     }
 
-    private findStringValue(key: string, defaultValue: string, secret: boolean): string {
+    private findStringValue(key: string, defaultValue: string, secret: boolean): string
+    {
         let theValue: string = defaultValue;
         let from: string = "default";
         const fileValue: string = this.fileValue(key);
@@ -57,11 +61,13 @@ export class Config {
         return theValue;
     }
 
-    private findIntValue(key: string, defaultValue: number, secret: boolean): number {
+    private findIntValue(key: string, defaultValue: number, secret: boolean): number
+    {
         const theValue: string = this.findStringValue(key, defaultValue.toString(), secret);
         return parseInt(theValue);
     }
-    private fileValue(key: string): string {
+    private fileValue(key: string): string
+    {
         const theFile: string = this.configFolder + key;
 
         try {
@@ -72,7 +78,8 @@ export class Config {
         }
     }
 
-    public getPort(): string {
+    public getPort(): string
+    {
         return this.port;
     }
 }
