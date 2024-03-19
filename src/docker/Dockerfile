@@ -13,18 +13,16 @@ RUN npm run build
 
 # Get branch and patch level, then create VERSION.txt file
 RUN BRANCH=$(git rev-parse --abbrev-ref HEAD) && \
-    PATCH=$(git rev-parse HEAD) && \
-    DATE=$(date) && \
-    echo $DATE.$BRANCH.$PATCH > ./dist/VERSION.txt
-
+    DATE=$(date "+%Y-%m-%d:%H:%M:%S") && \
+    echo $DATE.$BRANCH > ./dist/VERSION.txt
 
 # Stage 2: Run the app in a lightweight image
 FROM node:21-alpine as deploy
 
-ENV PROTOCOL=http
-ENV HOST=localhost
-ENV AUTH=admin:admin
-ENV PORT=8081
+ENV OPENSEARCH_PROTOCOL=http
+ENV OPESNEARCH_HOST=localhost
+ENV OPENSEARCH_AUTH=admin:admin
+ENV API_PORT=8081
 ENV OPENSEARCH_PORT=9200
 ENV INDEX_NAME=search-index
 ENV CONNECTION_TIMEOUT=10

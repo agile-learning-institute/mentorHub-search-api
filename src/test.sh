@@ -13,10 +13,10 @@ npm i
 # build
 npm run build
  
-export PROTOCOL=http
-export HOST=localhost
-export AUTH=admin:admin
-export PORT=8081
+export OPENSEARCH_PROTOCOL=http
+export OPENSEARCH_HOST=localhost
+export OPENSEARCH_AUTH=admin:admin
+export API_PORT=8081
 export OPENSEARCH_PORT=9200
 export INDEX_NAME=search-index
 export CONNECTION_TIMEOUT=10
