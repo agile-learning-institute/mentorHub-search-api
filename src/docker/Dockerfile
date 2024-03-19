@@ -7,6 +7,7 @@ COPY package*.json .
 RUN npm install
 RUN mkdir dist
 COPY . .
+RUN mv /app/src/entrypoint.sh /app/dist
 
 RUN npm run build
 
