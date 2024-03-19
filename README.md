@@ -41,8 +41,9 @@ After that command completes successfully you can verify it worked successfully 
 ## Local API Testing with CURL
 
 ### Get search results
+Note: You can change the `"query: jame"` header to another query. Just replace the text on the right-side of the colon. `"query: <your-query>"`
 ```bash
-curl -X GET "http://localhost:8081/api/search/" -H  "accept: application/json" -H  "query: <your-query>"
+curl -X GET "http://localhost:8081/api/search/" -H  "accept: application/json" -H  "query: jame"
 ```
 
 ### Get API health
