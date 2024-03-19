@@ -1,7 +1,7 @@
 import "dotenv/config";
 import env from "../util/validateEnv";
 import express from "express";
-import { OpensearchClient, Initialize } from "./client";
+import { Initialize } from "./client";
 import QueryBody from "./querybody";
 import { collectDefaultMetrics, register } from "prom-client";
 import createHttpError from "http-errors";
@@ -9,13 +9,9 @@ import { errorHandler } from "./middleware/errorHandler";
 import { Config } from "./config";
 
 const app = express();
-const client = OpensearchClient;
-Initialize(client);
 
 collectDefaultMetrics({ register });
-
 register.setDefaultLabels({ app: 'opensearch-api' });
-
 
 app.get('/', (req, res) =>
 {
@@ -24,6 +20,8 @@ app.get('/', (req, res) =>
 
 app.get('/api/search', async (req, res, next) =>
 {
+    //initialize client
+    const client = await Initialize();
     try {
         //check if we recieved the query header
         if (!req.headers.query || typeof req.headers.query !== 'string') {
@@ -33,16 +31,19 @@ app.get('/api/search', async (req, res, next) =>
         //structure the opensearch query
         const queryBody: QueryBody = new QueryBody(queryString, 5, 0);
         //actually use the query
-        const searchRes = await client.search({
+        const searchRes = await client?.search({
             index: env.INDEX_NAME,
             body: queryBody
         });
         //respond with opensearch response
-        res.status(200).json(searchRes.body);
+        res.status(200).json(searchRes?.body);
     }
     catch (error) {
         console.error(error);
         next(error);
+    }
+    finally {
+        await client?.close();
     }
 });
 
@@ -60,7 +61,8 @@ app.get('/api/health', async (req, res, next) =>
     }
 });
 
-app.get('/api/config', async (req, res, next) => {
+app.get('/api/config', async (req, res, next) =>
+{
     try {
         const config = new Config();
         res.status(200).json(config);
@@ -69,7 +71,7 @@ app.get('/api/config', async (req, res, next) => {
         console.error(error);
         next(error);
     }
-})
+});
 
 app.use(errorHandler);
 
