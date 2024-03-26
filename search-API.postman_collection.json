@@ -1,0 +1,200 @@
+{
+	"info": {
+		"_postman_id": "5260f9d6-83cc-4bfd-8770-2c549c7a6ed4",
+		"name": "search API",
+		"description": "This is a super simple API for searching on mentorhub\n\nContact Support:\n Email: devs@agile-learning.institute",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "28175273"
+	},
+	"item": [
+		{
+			"name": "api",
+			"item": [
+				{
+					"name": "search",
+					"item": [
+						{
+							"name": "Search Opensearch database",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"description": "(Required) Search query value",
+										"key": "query",
+										"value": "<string>"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"url": "{{baseUrl}}/api/search/"
+							},
+							"response": [
+								{
+									"name": "Successful response",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"description": "(Required) Search query value",
+												"key": "query",
+												"value": "<string>"
+											},
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"url": "{{baseUrl}}/api/search/"
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Link",
+											"value": "<string>",
+											"description": {
+												"content": "Links to the next and previous pages for infinite scroll",
+												"type": "text/plain"
+											}
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"took\": \"<integer>\",\n  \"timed_out\": \"<boolean>\",\n  \"_shards\": {\n    \"total\": \"<integer>\",\n    \"successful\": \"<integer>\",\n    \"skipped\": \"<integer>\",\n    \"failed\": \"<integer>\"\n  },\n  \"hits\": {\n    \"total\": {\n      \"value\": \"<integer>\",\n      \"relation\": \"<string>\"\n    },\n    \"max_score\": \"<number>\",\n    \"hits\": [\n      {\n        \"_index\": \"<string>\",\n        \"_id\": \"<string>\",\n        \"_score\": \"<number>\",\n        \"_source\": {\n          \"name\": \"<string>\",\n          \"collection\": \"<string>\"\n        }\n      },\n      {\n        \"_index\": \"<string>\",\n        \"_id\": \"<string>\",\n        \"_score\": \"<number>\",\n        \"_source\": {\n          \"name\": \"<string>\",\n          \"collection\": \"<string>\"\n        }\n      }\n    ]\n  }\n}"
+								},
+								{
+									"name": "Bad Request",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"description": "(Required) Search query value",
+												"key": "query",
+												"value": "<string>"
+											},
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"url": "{{baseUrl}}/api/search/"
+									},
+									"status": "Bad Request",
+									"code": 400,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"example\": {\n    \"error\": \"Invalid request. Check your query parameters.\"\n  }\n}"
+								},
+								{
+									"name": "Internal Server Error",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"description": "(Required) Search query value",
+												"key": "query",
+												"value": "<string>"
+											},
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"url": "{{baseUrl}}/api/search/"
+									},
+									"status": "Internal Server Error",
+									"code": 500,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"example\": {\n    \"error\": \"Internal server error. Please try again later.\"\n  }\n}"
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "health",
+					"item": [
+						{
+							"name": "Prometheus Healthcheck endpoint",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": "{{baseUrl}}/api/health/"
+							},
+							"response": [
+								{
+									"name": "Successful operation",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": "{{baseUrl}}/api/health/"
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "config",
+					"item": [
+						{
+							"name": "Get API Configuration Information",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": "{{baseUrl}}/api/config/"
+							},
+							"response": [
+								{
+									"name": "Successful operation",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": "{{baseUrl}}/api/config/"
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								}
+							]
+						}
+					]
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "/"
+		}
+	]
+}
