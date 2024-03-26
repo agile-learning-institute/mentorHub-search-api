@@ -36,7 +36,7 @@ Use the following command to build and run the container locally. See [here for 
 ../src/docker/docker-build.sh
 ```
 
-After that command completes successfully you can verify it worked successfully by [running curl tests](#local-api-testing-with-curl) to confirm the build.
+After that command completes successfully you can verify it worked successfully by [running curl tests](#local-api-testing-with-curl) or [postman](#testing-the-api-with-postman) to confirm the build.
 
 ## Local API Testing with CURL
 
@@ -55,3 +55,13 @@ curl -X GET "http://localhost:8081/api/health/" -H  "accept: */*"
 ```bash
 curl -X GET "http://localhost:8081/api/config/" -H  "accept: */* "
 ```
+
+## Testing the API with Postman
+
+1. Download and install Postman from [here](https://www.postman.com/downloads/).
+2. Clone or download this repository to your local machine.
+3. Open Postman.
+4. Click on the "Import" button in the top left corner.
+5. Select "Import From File" and choose the downloaded JSON file (`search-api.postman_collection.json`).
+6. The collection will be imported into Postman. You can now explore and test the API endpoints.
+
