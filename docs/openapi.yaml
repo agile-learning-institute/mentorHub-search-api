@@ -1,4 +1,7 @@
 openapi: 3.0.3
+servers:
+  - url: http://localhost:8081
+  - url: http://localhost:9200
 info:
   title: search API
   description: |-
@@ -8,7 +11,7 @@ info:
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
-  version: 1.0.3
+  version: 1.0.4
 paths:
   /api/search/:
     get:
