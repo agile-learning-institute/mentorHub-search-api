@@ -1,4 +1,6 @@
 # mentorhub-search-api
+#DISCLAIMER
+The Opensearch container is quite big, roughly 1.3 GB. This might present a problem for those on a metered connection looking to contribute.
 
 ## Overview
 
