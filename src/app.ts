@@ -1,11 +1,11 @@
 import "dotenv/config";
 import env from "../util/validateEnv";
 import express from "express";
-import { Initialize } from "./client";
 import { collectDefaultMetrics, register } from "prom-client";
 import createHttpError from "http-errors";
 import { errorHandler } from "./middleware/errorHandler";
-import { Config } from "./config";
+import Config from "./config";
+import ElasticIO from "./ElasticIO";
 
 const app = express();
 
@@ -20,8 +20,13 @@ app.get('/', (req, res) =>
 app.get('/api/search', async (req, res, next) =>
 {
     //initialize client
-    const client = await Initialize();
+    const elasticIO = new ElasticIO();
     try {
+        const client = await elasticIO.initialize();
+        if (typeof (client) === undefined) {
+            console.warn("No client returned from elasticsearch");
+            throw createHttpError(503, 'Search server cannot be reached');
+        }
         //check if we recieved the query header
         if (!req.headers.query || typeof req.headers.query !== 'string') {
             throw createHttpError(400, 'Bad Request: Missing or invalid "query" header');
@@ -31,14 +36,28 @@ app.get('/api/search', async (req, res, next) =>
             index: env.INDEX_NAME,
             body: {
                 query: {
-                    multi_match: {
-                        query: queryString,
-                        type: "best_fields", // Adjust type based on your requirements
-                        fields: ["*"] // Search across all fields
+                    bool: {
+                        should: [
+                            {
+                                multi_match: {
+                                    query: `${queryString}*`,
+                                    type: "best_fields",
+                                    fields: ["name", "status"]
+
+                                }
+                            },
+                            {
+                                query_string: {
+                                    query: `${queryString}*`,
+                                    fields: ["name", "status"]
+                                }
+                            }
+                        ]
                     }
                 }
             }
-        });
+        }
+        );
         //respond with elasticsearch response
         res.status(200).json(searchRes?.hits);
     }
@@ -47,7 +66,7 @@ app.get('/api/search', async (req, res, next) =>
         next(error);
     }
     finally {
-        await client?.close();
+        await elasticIO?.disconnect(new Config());
     }
 });
 

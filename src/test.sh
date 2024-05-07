@@ -13,12 +13,9 @@ npm i
 # build
 npm run build
  
-export ELASTICSEARCH_PROTOCOL=http
+export ELASTICSEARCH_PROTOCOL=https
 export ELASTICSEARCH_HOST=localhost
 export API_PORT=8081
 export ELASTICSEARCH_PORT=9200
 export INDEX_NAME=search-index
 export CONNECTION_TIMEOUT=10
-cp ./src/entrypoint.sh ./dist/
-cd ./dist/
-./entrypoint.sh

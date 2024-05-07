@@ -7,7 +7,7 @@ interface ConfigItem
     from: string;
 }
 
-export class Config
+export default class Config
 {
     configItems: ConfigItem[] = [];
     patch: string = " ";
@@ -19,7 +19,7 @@ export class Config
     databaseTimeout: number = 0;
 
     //DEFAULTS
-    private static readonly versionMajor: string = "1";
+    private static readonly versionMajor: string = "2";
     private static readonly versionMinor: string = "0";
     private static readonly defaultConfigFolder: string = "./";
     private static readonly defaultConnectionString: string = env.CONNECTION_STRING;
