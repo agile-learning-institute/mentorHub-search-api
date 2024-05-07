@@ -16,5 +16,7 @@ export default cleanEnv(process.env, {
     ELASTICSEARCH_PORT: port(),
     INDEX_NAME: str(),
     CONNECTION_STRING: connectionStringValidator(),
-    CONNECTION_TIMEOUT: num()
+    CONNECTION_TIMEOUT: num(),
+    ELASTICSEARCH_USERNAME: str(),
+    ELASTICSEARCH_PASS: str()
 });
