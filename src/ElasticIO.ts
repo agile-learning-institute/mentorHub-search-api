@@ -1,25 +1,62 @@
 import { Client } from "@elastic/elasticsearch";
 import env from "../util/validateEnv";
+import Config from "./config";
 
-export default class ElasticIO {
+export default class ElasticIO
+{
 
-    constructor() {}
+    private elasticsearchClient: Client | undefined;
 
-    public async Initialize() {
+    constructor() { }
+
+
+
+    private connectionBody: {
+        node: string;
+        auth: {
+            username: string;
+            password: string;
+        };
+        tls: {
+            ca: string;
+            rejectUnauthorized: boolean;
+        };
+    } = {
+            node: env.CONNECTION_STRING,
+            auth: {
+                username: env.ELASTICSEARCH_USERNAME,
+                password: env.ELASTICSEARCH_PASS,
+            },
+            tls: {
+                ca: '',
+                rejectUnauthorized: false
+            }
+        };
+
+    public async initialize(): Promise<Client | undefined>
+    {
         try {
-            const elasticsearchClient = new Client({ node: env.CONNECTION_STRING });
+            this.elasticsearchClient = new Client(this.connectionBody);
             console.log("Testing connection to ElasticsearchDB...");
-            const ping = await elasticsearchClient.ping();
+            const ping = await this.elasticsearchClient.ping();
             console.log(ping);
             console.log("Elasticsearch server is reachable");
-            return elasticsearchClient;
+            return this.elasticsearchClient;
         } catch (error) {
-            console.log("Error connecting to elasticsearch database");
+            console.error("Error connecting to elasticsearch database");
             console.error(error);
         }
     }
 
-    public async disconnect():Promise<void> {
-
+    public async disconnect(config: Config): Promise<void>
+    {
+        if (this.elasticsearchClient) {
+            const dbName = config.databaseName;
+            await this.elasticsearchClient.close();
+            console.info(`Database ${dbName} disconnected via Client`);
+        }
+        else {
+            console.warn("Trying to disconnect nonexistent connection");
+        }
     }
 }

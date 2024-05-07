@@ -1,80 +1,87 @@
 import { Client } from "@elastic/elasticsearch";
-import { Initialize } from "./client";
+import ElasticIO from "./ElasticIO";
+import env from "../util/validateEnv";
+import Config from "./config";
 
 //Mock the Client
-jest.mock('@elastic/elasticsearch');
+jest.mock("@elastic/elasticsearch");
 
 //Mock the env vars
-jest.mock('../util/validateEnv', () => ({
+jest.mock("../util/validateEnv", () => ({
     __esModule: true,
     default: jest.fn().mockReturnValue({}),
 }));
 
-describe('Initialize function', () =>
+const mockConfig = {
+    databaseName: "mockedDBName"
+} as Config;
+
+describe("ElasticIO", () =>
 {
-    it('should return a client instance on successful connection', async () =>
+    let elasticIO: ElasticIO;
+
+    beforeEach(() =>
     {
-        //Mock the env connection string
-        const CONNECTION_STRING = 'https://localhost:9200';
-
-        const mockedClient = new Client({ node: CONNECTION_STRING }) as jest.Mocked<Client>;
-        //Mock the ping method of the CLient instance to resolve successfully
-        mockedClient.ping.mockResolvedValue(true);
-
-
-
-        const client = await Initialize();
-
-        //Assert that the Client constructor was called with the correct arguments
-        expect(Client).toHaveBeenCalledWith({
-            node: CONNECTION_STRING,
-            auth: {
-                username: "elastic", // Default Elasticsearch username
-                password: "o0=eLmmQbsrdEW89a-Id" // Elasticsearch password
-            },
-            tls: {
-                ca: "",
-                rejectUnauthorized: false
-            }
-        });
-
-        expect(client).toBe(mockedClient);
-        //Assert that the ping method was called
-        //expect(mockPing).toHaveBeenCalled();
-
-        //Assert that the function returns the mocked client instance
-        expect(client).toBeDefined();
+        elasticIO = new ElasticIO();
     });
 
-    it('should handle connection errors', async () =>
+    afterEach(() =>
     {
-        //Mock the ping emthod of the Client instance to reject w/ an error
-        const mockPing = jest.fn().mockRejectedValue(new Error('Connection failed'));
-
-        //Override the ping method
-        (Client as jest.Mock).mockImplementation(() => ({
-            ping: mockPing
-        }));
-
-        const CONNECTION_STRING = 'https://localhost:9200';
-
-        const client = await Initialize();
-        //Assert that the Client constructor was called with the correct arguments
-        expect(Client).toHaveBeenCalledWith({
-            node: CONNECTION_STRING,
-            auth: {
-                username: "elastic", // Default Elasticsearch username
-                password: "o0=eLmmQbsrdEW89a-Id" // Elasticsearch password
-            },
-            tls: {
-                ca: "",
-                rejectUnauthorized: false
-            }
-        });
-        //Assert that the ping method was called
-        expect(mockPing).toHaveBeenCalled();
-
-        //Assert that the function returns the mocked client instance
-        expect(client).toBeUndefined();
+        jest.clearAllMocks();
     });
+
+    describe("Initialize", () =>
+    {
+        it("should initialize Elasticsearch client with correct connection parameters", async () =>
+        {
+            await elasticIO.initialize();
+            expect(Client).toHaveBeenCalledWith({
+                node: env.CONNECTION_STRING,
+                auth: {
+                    username: env.ELASTICSEARCH_PASS,
+                    password: env.ELASTICSEARCH_USERNAME
+                },
+                tls: {
+                    ca: "",
+                    rejectUnauthorized: false
+                }
+            });
+        });
+        it("should return initialized client", async () =>
+        {
+            const result = await elasticIO.initialize();
+            expect(result).toBeDefined();
+        });
+        it("should log error of connection fails", async () =>
+        {
+            (Client as jest.Mock).mockImplementationOnce(() =>
+            {
+                throw new Error("Connection error");
+            });
+            const consoleErrorSpy = jest.spyOn(console, "error");
+            await elasticIO.initialize();
+            expect(consoleErrorSpy).toHaveBeenCalledWith("Error connecting to elasticsearch database");
+        });
+    });
+
+    describe("disconnect", () =>
+    {
+        it("should close Elasticsearch client connection if client is defined", async () =>
+        {
+            elasticIO["elasticsearchClient"] = {
+                close: jest.fn().mockResolvedValue(undefined)
+            } as unknown as Client;
+
+            await elasticIO.disconnect(mockConfig);
+            expect(elasticIO["elasticsearchClient"]!.close).toHaveBeenCalled();
+        });
+
+        it("should not close client if client is not defined", async () =>
+        {
+            const consoleWarnSpy = jest.spyOn(console, "warn");
+            await elasticIO.disconnect(mockConfig);
+            expect(consoleWarnSpy).toHaveBeenCalledWith("Trying to disconnect nonexistent connection");
+        });
+    });
+
 });
