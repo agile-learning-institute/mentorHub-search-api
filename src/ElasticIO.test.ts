@@ -78,7 +78,7 @@ describe("ElasticIO", () =>
 
         it("should not close client if client is not defined", async () =>
         {
-            const consoleWarnSpy = jest.spyOn(console, "warn");
+            const consoleWarnSpy = jest.spyOn(console, "error");
             await elasticIO.disconnect(mockConfig);
             expect(consoleWarnSpy).toHaveBeenCalledWith("Trying to disconnect nonexistent connection");
         });

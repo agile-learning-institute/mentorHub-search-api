@@ -50,13 +50,16 @@ export default class ElasticIO
 
     public async disconnect(config: Config): Promise<void>
     {
-        if (this.elasticsearchClient) {
-            const dbName = config.databaseName;
-            await this.elasticsearchClient.close();
-            console.info(`Database ${dbName} disconnected via Client`);
-        }
-        else {
-            console.warn("Trying to disconnect nonexistent connection");
+        try {
+            if (this.elasticsearchClient) {
+                const dbName = config.databaseName;
+                await this.elasticsearchClient.close();
+                console.info(`Database ${dbName} disconnected via Client`);
+            } else {
+                console.error("Trying to disconnect nonexistent connection");
+            }
+        } catch (error) {
+            console.error("An error occurred while disconnecting:", error);
         }
     }
 }
