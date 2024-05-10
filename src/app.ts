@@ -58,8 +58,11 @@ app.get('/api/search', async (req, res, next) =>
             }
         }
         );
+        if (searchRes?.timed_out) {
+            createHttpError(504, "Search database response has timed out. Please try again later.");
+        }
         //respond with elasticsearch response
-        res.status(200).json(searchRes?.hits);
+        res.status(200).json(searchRes?.hits.hits);
     }
     catch (error) {
         console.error(error);
