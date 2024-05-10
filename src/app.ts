@@ -1,17 +1,16 @@
 import "dotenv/config";
 import env from "../util/validateEnv";
 import express from "express";
-import { Initialize } from "./client";
-import QueryBody from "./querybody";
 import { collectDefaultMetrics, register } from "prom-client";
 import createHttpError from "http-errors";
 import { errorHandler } from "./middleware/errorHandler";
-import { Config } from "./config";
+import Config from "./config";
+import ElasticIO from "./ElasticIO";
 
 const app = express();
 
 collectDefaultMetrics({ register });
-register.setDefaultLabels({ app: 'opensearch-api' });
+register.setDefaultLabels({ app: 'elasticsearch-api' });
 
 app.get('/', (req, res) =>
 {
@@ -21,29 +20,56 @@ app.get('/', (req, res) =>
 app.get('/api/search', async (req, res, next) =>
 {
     //initialize client
-    const client = await Initialize();
+    const elasticIO = new ElasticIO();
     try {
+        const client = await elasticIO.initialize();
+        if (typeof (client) === undefined) {
+            console.warn("No client returned from elasticsearch");
+            throw createHttpError(503, 'Search server cannot be reached');
+        }
         //check if we recieved the query header
         if (!req.headers.query || typeof req.headers.query !== 'string') {
             throw createHttpError(400, 'Bad Request: Missing or invalid "query" header');
         }
         const queryString = req.headers.query as string;
-        //structure the opensearch query
-        const queryBody: QueryBody = new QueryBody(queryString, 5, 0);
-        //actually use the query
         const searchRes = await client?.search({
             index: env.INDEX_NAME,
-            body: queryBody
-        });
-        //respond with opensearch response
-        res.status(200).json(searchRes?.body);
+            body: {
+                query: {
+                    bool: {
+                        should: [
+                            {
+                                multi_match: {
+                                    query: `${queryString}*`,
+                                    type: "best_fields",
+                                    fields: ["name", "status"]
+
+                                }
+                            },
+                            {
+                                query_string: {
+                                    query: `${queryString}*`,
+                                    fields: ["name", "status"]
+                                }
+                            }
+                        ]
+                    }
+                }
+            }
+        }
+        );
+        if (searchRes?.timed_out) {
+            createHttpError(504, "Search database response has timed out. Please try again later.");
+        }
+        //respond with elasticsearch response
+        res.status(200).json(searchRes?.hits.hits);
     }
     catch (error) {
         console.error(error);
         next(error);
     }
     finally {
-        await client?.close();
+        await elasticIO?.disconnect(new Config());
     }
 });
 

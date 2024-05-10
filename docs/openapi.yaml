@@ -11,11 +11,11 @@ info:
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
-  version: 1.0.4
+  version: 2.0.0
 paths:
   /api/search/:
     get:
-      summary: Search Opensearch database
+      summary: Search Elasticsearch database
       parameters:
         - name: query
           in: header
@@ -47,6 +47,12 @@ paths:
             application/json:
               example:
                 error: "Internal server error. Please try again later."
+        '504':
+          description: Search Request timed_out
+          content:
+            application/json:
+              example:
+                error: "Search database response has timed out. Please try again later."
   /api/health/:
     get:
       summary: Prometheus Healthcheck endpoint
@@ -58,7 +64,6 @@ paths:
     get:
       summary: Get API Configuration Information
       operationId: getConfig
-      parameters:
       responses:
         '200':
           description: Successful operation
@@ -71,53 +76,31 @@ paths:
 components:
   schemas:
     SearchResponse:
-      type: object
-      properties:
-        took:
-          type: integer
-        timed_out:
-          type: boolean
-        _shards:
-          type: object
-          properties:
-            total:
-              type: integer
-            successful:
-              type: integer
-            skipped:
-              type: integer
-            failed:
-              type: integer
-        hits:
-          type: object
-          properties:
-            total:
-              type: object
-              properties:
-                value:
-                  type: integer
-                relation:
-                  type: string
-            max_score:
-              type: number
-            hits:
-              type: array
-              items:
-                type: object
-                properties:
-                  _index:
-                    type: string
-                  _id:
-                    type: string
-                  _score:
-                    type: number
-                  _source:
-                    type: object
-                    properties:
-                      name:
-                        type: string
-                      collection:
-                        type: string
+      type: array
+      items:
+        type: object
+        properties:
+          _index:
+            type: string
+          _id:
+            type: string
+          _score:
+            type: number
+          _source:
+            type: object
+            additionalProperties: true
+            description: Dynamic keys/fields allowed
+            properties:
+              name:
+                type: string
+              status: 
+                type: string
+              ID:
+                type: string
+              collection:
+                type: string
+              
+              
     Config:
       type: object
       properties:
