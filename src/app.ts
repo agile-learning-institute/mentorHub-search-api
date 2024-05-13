@@ -43,7 +43,6 @@ app.get('/api/search', async (req, res, next) =>
                                     query: `${queryString}*`,
                                     type: "best_fields",
                                     fields: ["name", "status"]
-
                                 }
                             },
                             {
