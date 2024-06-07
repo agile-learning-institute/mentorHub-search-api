@@ -9,8 +9,6 @@ export default class ElasticIO
 
     constructor() { }
 
-
-
     private connectionBody: {
         node: string;
         auth: {
@@ -46,6 +44,46 @@ export default class ElasticIO
             console.error("Error connecting to elasticsearch database");
             console.error(error);
         }
+    }
+
+    processResults(hits: import("@elastic/elasticsearch/lib/api/types").SearchHit<unknown>[] | undefined)
+    {
+        if (!hits) return [];
+
+        hits.sort((a, b) => (b._score ?? 0) - (a._score ?? 0));
+
+        let processedHits = hits.map((hit) => hit._source);
+
+        return processedHits;
+    }
+
+    public async search(queryString: string)
+    {
+        const searchRes = await this.elasticsearchClient?.search({
+            index: env.INDEX_NAME,
+            body: {
+                query: {
+                    bool: {
+                        should: [
+                            {
+                                multi_match: {
+                                    query: `${queryString}*`,
+                                    type: "best_fields",
+                                    fields: ["name", "status", "firstName", "lastName"]
+                                }
+                            },
+                            {
+                                query_string: {
+                                    query: `${queryString}*`,
+                                    fields: ["name", "status", "firstName", "lastName"]
+                                }
+                            }
+                        ]
+                    }
+                }
+            }
+        });
+        return searchRes;
     }
 
     public async disconnect(config: Config): Promise<void>
