@@ -79,27 +79,17 @@ components:
       type: array
       items:
         type: object
+        additionalProperties: true
+        description: Dynamic keys/fields allowed
         properties:
-          _index:
+          name:
             type: string
-          _id:
+          status: 
             type: string
-          _score:
-            type: number
-          _source:
-            type: object
-            additionalProperties: true
-            description: Dynamic keys/fields allowed
-            properties:
-              name:
-                type: string
-              status: 
-                type: string
-              ID:
-                type: string
-              collection:
-                type: string
-              
+          ID:
+            type: string
+          collection:
+            type: string
               
     Config:
       type: object
