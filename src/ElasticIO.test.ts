@@ -2,6 +2,7 @@ import { Client } from "@elastic/elasticsearch";
 import ElasticIO from "./ElasticIO";
 import env from "../util/validateEnv";
 import Config from "./config";
+import { SearchHit } from "@elastic/elasticsearch/lib/api/types";
 
 //Mock the Client
 jest.mock("@elastic/elasticsearch");
@@ -61,6 +62,95 @@ describe("ElasticIO", () =>
             const consoleErrorSpy = jest.spyOn(console, "error");
             await elasticIO.initialize();
             expect(consoleErrorSpy).toHaveBeenCalledWith("Error connecting to elasticsearch database");
+        });
+    });
+
+    describe("processResults", () =>
+    {
+        it("should return an empty array when hits is undefined", () =>
+        {
+            const result = elasticIO.processResults(undefined);
+            expect(result).toEqual([]);
+        });
+        it("should return an empty array when hits is an empty array", () =>
+        {
+            const result = elasticIO.processResults([]);
+            expect(result).toEqual([]);
+        });
+        it("should sort the search results by _score in descending order and return their _source properties", () =>
+        {
+            const hits: SearchHit<unknown>[] = [
+                { _score: 1, _source: { id: 1, name: "Item 1" } } as SearchHit<unknown>,
+                { _score: 3, _source: { id: 3, name: "Item 3" } } as SearchHit<unknown>,
+                { _score: 2, _source: { id: 2, name: "Item 2" } } as SearchHit<unknown>,
+            ];
+
+            const result = elasticIO.processResults(hits);
+
+            expect(result).toEqual([
+                { id: 3, name: "Item 3" },
+                { id: 2, name: "Item 2" },
+                { id: 1, name: "Item 1" },
+            ]);
+        });
+    });
+
+    describe("search", () =>
+    {
+        it("should should call elasticsearchClient.search with the correct parameters", async () =>
+        {
+            const mockClient = {
+                search: jest.fn().mockResolvedValue({
+                    hits: {
+                        hits: [
+                            { _source: { name: "Junior Jobs", status: "Active", ID: { "$oid": "bb00" } } },
+                            { _source: { name: "Michael Smith", status: "Active", ID: { "$oid": "bb01" } } },
+                        ]
+                    }
+                })
+            };
+
+            elasticIO["elasticsearchClient"] = mockClient as unknown as Client;
+
+            const queryString = 'active';
+            const searchRes = await elasticIO.search(queryString);
+
+            expect(mockClient.search).toHaveBeenCalledWith({
+                index: env.INDEX_NAME,
+                body: {
+                    query: {
+                        bool: {
+                            should: [
+                                {
+                                    multi_match: {
+                                        query: `${queryString}*`,
+                                        type: "best_fields",
+                                        fields: ["name", "status", "firstName", "lastName"]
+                                    }
+                                },
+                                {
+                                    query_string: {
+                                        query: `${queryString}*`,
+                                        fields: ["name", "status", "firstName", "lastName"]
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            });
+            if (searchRes) {
+                searchRes.hits.hits.forEach(result =>
+                {
+                    expect(result._source).toEqual(
+                        expect.objectContaining({
+                            ID: expect.any(Object),
+                            name: expect.any(String),
+                            status: expect.any(String),
+                        })
+                    );
+                });
+            }
         });
     });
 

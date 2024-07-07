@@ -17,6 +17,7 @@ app.get('/', (req, res) =>
     res.send('Express + TypeScript Server');
 });
 
+
 app.get('/api/search', async (req, res, next) =>
 {
     //initialize client
@@ -32,43 +33,21 @@ app.get('/api/search', async (req, res, next) =>
             throw createHttpError(400, 'Bad Request: Missing or invalid "query" header');
         }
         const queryString = req.headers.query as string;
-        const searchRes = await client?.search({
-            index: env.INDEX_NAME,
-            body: {
-                query: {
-                    bool: {
-                        should: [
-                            {
-                                multi_match: {
-                                    query: `${queryString}*`,
-                                    type: "best_fields",
-                                    fields: ["name", "status"]
-                                }
-                            },
-                            {
-                                query_string: {
-                                    query: `${queryString}*`,
-                                    fields: ["name", "status"]
-                                }
-                            }
-                        ]
-                    }
-                }
-            }
-        }
-        );
+        const searchRes = await elasticIO.search(queryString);
         if (searchRes?.timed_out) {
             createHttpError(504, "Search database response has timed out. Please try again later.");
         }
+        const processedResults = elasticIO.processResults(searchRes?.hits.hits);
         //respond with elasticsearch response
-        res.status(200).json(searchRes?.hits.hits);
+        res.status(200).json(processedResults);
+        console.info("Search results returned successfully");
     }
     catch (error) {
         console.error(error);
         next(error);
     }
     finally {
-        await elasticIO?.disconnect(new Config());
+        await elasticIO.disconnect(new Config());
     }
 });
 
@@ -79,6 +58,7 @@ app.get('/api/health', async (req, res, next) =>
         res.status(200);
         res.set('Content-Type', register.contentType);
         res.end(metrics);
+        console.info("GetHealth Completed");
 
     } catch (error) {
         console.error(error);
@@ -91,6 +71,7 @@ app.get('/api/config', async (req, res, next) =>
     try {
         const config = new Config();
         res.status(200).json(config);
+        console.info("GetConfig Completed");
     }
     catch (error) {
         console.error(error);
