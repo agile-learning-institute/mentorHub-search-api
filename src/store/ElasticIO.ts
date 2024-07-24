@@ -15,7 +15,7 @@ export default class ElasticIO {
             console.log("Connected", JSON.stringify(await this.elasticsearchClient.ping()));
         } catch (error) {
             console.error("Error connecting to elasticsearch database", JSON.stringify(error));
-            // exit(1);    // FAIL FAST
+            exit(1);    // FAIL FAST
         }
     }
 

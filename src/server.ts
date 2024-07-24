@@ -13,7 +13,7 @@ export class Server {
 
     constructor() {
         this.elastic = new ElasticIO();
-        this.elastic.connect();
+        // this.elastic.connect();
     }
 
     public async serve() {
