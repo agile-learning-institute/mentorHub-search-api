@@ -7,12 +7,7 @@ describe('Config', () => {
 
     test('test getPort', () => {
         config.initialize();
-        expect(config.getPort()).toEqual(8084);
-    });
-
-    test('test getTimeout', () => {
-        config.initialize();
-        expect(config.getTimeout()).toEqual(10);
+        expect(config.getPort()).toEqual(8081);
     });
 
     test('test getConfigFolder', () => {

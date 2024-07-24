@@ -22,8 +22,10 @@ export  class Config {
     // Private Properties
     #configFolder: string = "./";
     #port: number = 8084;
-    #timeout: number = 10;
     #connectionString: string = "";
+
+    // Default connection string for locally hosted database
+    #defaultConnectionString: string = '{"node":"https://@mentorhub-searchdb:9200","auth":{"username":"elastic","password":"o0=eLmmQbsrdEW89a-Id"},"tls":{"ca":"","rejectUnauthorized":false}}'; 
 
     /**
      * Constructor gets configuration values, loads the enumerators, and logs completion
@@ -37,9 +39,8 @@ export  class Config {
         this.configItems = [];
         this.apiVersion = "1.2." + this.getConfigValue("BUILT_AT", "LOCAL", false);
         this.#configFolder = this.getConfigValue("CONFIG_FOLDER", "/opt/mentorhub-search-api", false);
-        this.#port = parseInt(this.getConfigValue("PORT", "8084", false));
-        this.#timeout = parseInt(this.getConfigValue("TIMEOUT", "10", false));
-        this.#connectionString = this.getConfigValue("CONNECTION_STRING", "mongodb://root:example@localhost:27017", true);
+        this.#port = parseInt(this.getConfigValue("API_PORT", "8081", false));
+        this.#connectionString = this.getConfigValue("CONNECTION_STRING", this.#defaultConnectionString, true);
 
         // Initilize Config values that only used by the UI
         this.getConfigValue("PERSON_HOST", "localhost:8083", false);
@@ -99,10 +100,6 @@ export  class Config {
      */
     public getPort(): Number {
         return this.#port;
-    }
-
-    public getTimeout(): Number {
-        return this.#timeout;
     }
 
     public getConfigFolder(): string {

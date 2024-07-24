@@ -6,11 +6,7 @@ import config from './Config';
 describe('Config', () => {
 
     test('test getter for default port', () => {
-        expect(config.getPort()).toBe(8084);
-    });
-
-    test('test getter for default timeout', () => {
-        expect(config.getTimeout()).toBe(10);
+        expect(config.getPort()).toBe(8081);
     });
 
     test('test getter for default getConfigFolder()', () => {
@@ -18,7 +14,7 @@ describe('Config', () => {
     });
 
     test('test getter for default getConnectionString', () => {
-        expect(config.getConnectionString()).toBe("mongodb://root:example@localhost:27017");
+        expect(config.getConnectionString()).toBe('{"node":"https://@mentorhub-searchdb:9200","auth":{"username":"elastic","password":"o0=eLmmQbsrdEW89a-Id"},"tls":{"ca":"","rejectUnauthorized":false}}');
         expect(getConfigValue( "CONNECTION_STRING")).toBe("secret");
     });
 

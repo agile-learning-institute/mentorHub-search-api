@@ -13,12 +13,8 @@ describe('Config', () => {
         testConfigEnvironmentValue("CONFIG_FOLDER");
     });
 
-    test('test PORT', () => {
-        testConfigEnvironmentValue("PORT");
-    });
-
-    test('test TIMEOUT', () => {
-        testConfigEnvironmentValue("TIMEOUT");
+    test('test API_PORT', () => {
+        testConfigEnvironmentValue("API_PORT");
     });
 
     test('test CONNECTION_STRING', () => {

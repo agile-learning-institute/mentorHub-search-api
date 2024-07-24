@@ -8,17 +8,13 @@ describe('Config', () => {
 
     // Clear all mocks before each test
     beforeEach(() => {
-        process.env.CONFIG_FOLDER = "./test/configTest";
+        process.env.CONFIG_FOLDER = "./test/configTest"
         config.initialize();
         process.env.CONFIG_FOLDER = "";
     });
 
     test('test PORT', () => {
-        testConfigFileValue("PORT");
-    });
-
-    test('test TIMEOUT', () => {
-        testConfigFileValue("TIMEOUT");
+        testConfigFileValue("API_PORT");
     });
 
     test('test CONNECTION_STRING', () => {
