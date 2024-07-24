@@ -1,17 +1,35 @@
 import { Client } from "@elastic/elasticsearch";
-import env from "../util/validateEnv";
-import Config from "./config";
+import { exit } from "process";
+import config from "../config/Config";
+import IndexCard from "../interfaces/IndexCard";
 
-export default class ElasticIO
-{
+export default class ElasticIO {
+    private elasticsearchClient?: Client;
 
-    private elasticsearchClient: Client | undefined;
+    constructor() { 
+    }
 
-    constructor() { }
+    public async connect() {
+        try {
+            this.elasticsearchClient = new Client(JSON.parse(config.getConnectionString()));
+            console.log("Connected", JSON.stringify(await this.elasticsearchClient.ping()));
+        } catch (error) {
+            console.error("Error connecting to elasticsearch database", JSON.stringify(error));
+            // exit(1);    // FAIL FAST
+        }
+    }
 
+    public async disconnect() {
+        await this.elasticsearchClient?.close();
+    }
+    
+    public async search(query: string | string[] | undefined): Promise<IndexCard[]> {
+        let result: IndexCard[] = [];
 
-
-    private connectionBody: {
+        return result;
+    }
+}
+/*    private connectionBody: {
         node: string;
         auth: {
             username: string;
@@ -33,20 +51,6 @@ export default class ElasticIO
             }
         };
 
-    public async initialize(): Promise<Client | undefined>
-    {
-        try {
-            this.elasticsearchClient = new Client(this.connectionBody);
-            console.log("Testing connection to ElasticsearchDB...");
-            const ping = await this.elasticsearchClient.ping();
-            console.log(ping);
-            console.log("Elasticsearch server is reachable");
-            return this.elasticsearchClient;
-        } catch (error) {
-            console.error("Error connecting to elasticsearch database");
-            console.error(error);
-        }
-    }
 
     public async disconnect(config: Config): Promise<void>
     {
@@ -63,3 +67,4 @@ export default class ElasticIO
         }
     }
 }
+    */
