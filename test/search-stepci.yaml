@@ -1,7 +1,7 @@
 version: "1.1"
-name: Partner API Check
+name: Search API Check
 env:
-  host: localhost:8084
+  host: localhost:8081
 tests:
   observable:
     name: Test Observability
@@ -17,16 +17,10 @@ tests:
               properties:
                 configItems:
                   type: array
-                versions:
-                  type: array
-                enumerators:
-                  type: object
                 apiVersion:
                   type: string
               required:
                 - configItems
-                - versions
-                - enumerators
                 - apiVersion
               additionalProperties: false
       - name: GET Health
@@ -35,12 +29,12 @@ tests:
           method: GET
           check:
             status: /200/
-  people:
-    name: Test /api/people endpoint
+  search:
+    name: Test /api/search endpoint
     steps:
-      - name: GET a list of people
+      - name: GET a list of cards
         http:
-          url: http://${{env.host}}/api/people/
+          url: http://${{env.host}}/api/search/
           method: GET
           check:
             status: /200/
@@ -51,199 +45,15 @@ tests:
                 properties:
                   _id:
                     type: string
-                  firstName:
+                  collection:
                     type: string
-                  lastName:
+                  collection_id:
                     type: string
-                  phone:
-                    type: string
-                  eMail:
-                    type: string
-                required:
-                  - _id
-                  - firstName
-                  - lastName
-                  - phone
-                  - eMail
-                additionalProperties: false
-  partner:
-    name: Test /api/partner endpoints
-    steps:
-      - name: GET a list of partners
-        http:
-          url: http://${{env.host}}/api/partner/
-          method: GET
-          check:
-            status: /200/
-            schema:
-              type: array
-              items: 
-                type: object
-                properties:
-                  _id:
-                    type: string
-                  name:
-                    type: string
-                required:
-                  - _id
-                  - name
-                additionalProperties: false
-      - name: GET a single partner
-        http:
-          url: http://${{env.host}}/api/partner/bbbb00000000000000000001
-          method: GET
-          check:
-            status: /200/
-            schema:
-              type: object
-              properties:
-                _id:
-                  type: string
-                name:
-                  type: string
-                description:
-                  type: string
-                status:
-                  type: string
-                url:
-                  type: string
-                contactDetails:
-                  type: array
-                  items:
+                  document:
                     type: object
-                    properties:
-                      _id:
-                        type: string
-                      firstName:
-                        type: string
-                      lastName:
-                        type: string
-                      phone:
-                        type: string
-                lastSaved:
-                  type: object
-                  properties:
-                    atTime:
-                      type: string
-                    byUser:
-                      type: string
-                    fromIp:
-                      type: string
-                    correlationId:
-                      type: string
-                  required:
-                    - atTime
-                    - byUser
-                    - fromIp
-                    - correlationId
-                  additionalProperties: false
-              required:
-                - _id
-                - name
-              additionalProperties: false
-      - name: Create a New Partner
-        http:
-          url: http://${{env.host}}/api/partner/
-          method: Post
-          headers:
-            Content-Type: application/json
-          json: 
-            name: A test PartnerName
-            description: The description
-          captures:
-            newId:
-              jsonpath: $._id            
-          check:
-            status: /200/
-            jsonpath:
-              $.name: "A test PartnerName"
-              $.description: "The description"
-      - name: Patch a Partner Description
-        http:
-          url: http://${{env.host}}/api/partner/${{captures.newId}}
-          method: Patch
-          headers:
-            Content-Type: application/json
-          json: 
-            description: An updated description
-          check:
-            status: /200/
-            jsonpath:
-              $.description: "An updated description"
-      - name: Check the Patched Value
-        http:
-          url: http://${{env.host}}/api/partner/${{captures.newId}}
-          method: GET
-          check:
-            status: /200/
-            jsonpath:
-              $.name: A test PartnerName
-              $.description: "An updated description"
-  contact:
-    name: Test /api/partner/ID/contact endpoints
-    steps:
-      - name: Create a New Partner to test with
-        http:
-          url: http://${{env.host}}/api/partner/
-          method: Post
-          headers:
-            Content-Type: application/json
-          json: 
-            name: ContactTestingPartner
-          captures:
-            newId:
-              jsonpath: $._id            
-          check:
-            status: /200/
-            jsonpath:
-              $.name: "ContactTestingPartner"
-              $.contactDetails.length: 0
-      - name: Add Contact
-        http: 
-          url: http://${{env.host}}/api/partner/${{captures.newId}}/contact/aaaa00000000000000000000
-          method: Post
-          check:
-            status: /200/
-            jsonpath:
-              $._id: "aaaa00000000000000000000"
-              $.firstName: "James"
-              $.lastName: "Smith"
-              $.phone: "449-882-6722"
-      - name: Verify Contact Added
-        http:
-          url: http://${{env.host}}/api/partner/${{captures.newId}}
-          method: Get
-          check:
-            status: /200/
-            jsonpath:
-              $.contactDetails.length: 1
-              # $.contactDetails[0]._id: "aaaa00000000000000000000"
-              $.contactDetails[0].firstName: "James"
-              $.contactDetails[0].lastName: "Smith"
-              $.contactDetails[0].phone: "449-882-6722"
-      - name: Verify No-Dup-Contacts
-        http: 
-          url: http://${{env.host}}/api/partner/${{captures.newId}}/contact/aaaa00000000000000000000
-          method: Post
-          check:
-            status: /500/
-      - name: Remove Contact
-        http:
-          url: http://${{env.host}}/api/partner/${{captures.newId}}/contact/aaaa00000000000000000000
-          method: Delete
-          check:
-            status: /200/
-      - name: Check Contact Removed
-        http:
-          url: http://${{env.host}}/api/partner/${{captures.newId}}
-          method: Get
-          check:
-            status: /200/
-            jsonpath:
-              $.contactDetails.length: 0
-      - name: Verify No Invalid Contact
-        http: 
-          url: http://${{env.host}}/api/partner/${{captures.newId}}/contact/123456789012345678901234
-          method: Post
-          check:
-            status: /500/
+                required:
+                  - _id
+                  - collection
+                  - collection_id
+                  - document
+                additionalProperties: false
