@@ -4,7 +4,7 @@ The Opensearch container is quite big, roughly 1.3 GB. This might present a prob
 
 ## Overview
 
-This is a simple Typescript API that provides search results from the search database. This API uses data from a [backing Opensearch Database](https://github.com/agile-learning-institute/mentorHub-search-opensearch).
+This is a simple Typescript API that provides search results from the search database. This API uses data from a [backing Elasticsearch Database](https://github.com/agile-learning-institute/mentorHub-search-opensearch).
 
 [Here](https://github.com/orgs/agile-learning-institute/repositories?q=mentorhub-&type=all&sort=name) are all of the repositories in the [mentorHub](https://github.com/agile-learning-institute/mentorhub/tree/main) system
 The OpenAPI specifications for the API can be found in the ``docs`` folder, and are served [here](https://agile-learning-institute.github.io/mentorHub-search-api/)
