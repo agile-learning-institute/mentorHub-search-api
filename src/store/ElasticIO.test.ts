@@ -1,85 +1,44 @@
-// import { Client } from "@elastic/elasticsearch";
-// import ElasticIO from "./ElasticIO";
+import ElasticIO from "./ElasticIO";
 
-// //Mock the Client
-// jest.mock("@elastic/elasticsearch");
+describe('ElasticIO', () => {
+    let elastic: ElasticIO;
 
-// //Mock the env vars
-// jest.mock("../util/validateEnv", () => ({
-//     __esModule: true,
-//     default: jest.fn().mockReturnValue({}),
-// }));
+    beforeEach(() => {
+        elastic = new ElasticIO();
+        elastic.connect();
+    });
 
-// const mockConfig = {
-//     databaseName: "mockedDBName"
-// } as Config;
+    afterEach(() => {
+        elastic.disconnect();
+    })
 
-// describe("ElasticIO", () =>
-// {
-//     let elasticIO: ElasticIO;
+    test('test simple search', async () => {
+        const query = { query: { query_string: { query: "curriculum" } } };
+        const results = await elastic.search(query);
+        expect(results).toHaveProperty("hits");
+        expect(results.hits).toBeInstanceOf(Object);
+        expect(results.hits).toHaveProperty("hits");
+        expect(results.hits.hits).toBeInstanceOf(Array);
+        expect(results.hits.hits.length).toBe(1);
+    });
 
-//     beforeEach(() =>
-//     {
-//         elasticIO = new ElasticIO();
-//     });
+    test('test two word search', async () => {
+        const query = { query: { query_string: { query: "inactive person" } } };
+        const results = await elastic.search(query);
+        expect(results).toHaveProperty("hits");
+        expect(results.hits).toBeInstanceOf(Object);
+        expect(results.hits).toHaveProperty("hits");
+        expect(results.hits.hits).toBeInstanceOf(Array);
+        expect(results.hits.hits.length).toBe(9);
+    });
 
-//     afterEach(() =>
-//     {
-//         jest.clearAllMocks();
-//     });
-
-//     describe("Initialize", () =>
-//     {
-//         it("should initialize Elasticsearch client with correct connection parameters", async () =>
-//         {
-//             await elasticIO.initialize();
-//             expect(Client).toHaveBeenCalledWith({
-//                 node: env.CONNECTION_STRING,
-//                 auth: {
-//                     username: env.ELASTICSEARCH_PASS,
-//                     password: env.ELASTICSEARCH_USERNAME
-//                 },
-//                 tls: {
-//                     ca: "",
-//                     rejectUnauthorized: false
-//                 }
-//             });
-//         });
-//         it("should return initialized client", async () =>
-//         {
-//             const result = await elasticIO.initialize();
-//             expect(result).toBeDefined();
-//         });
-//         it("should log error of connection fails", async () =>
-//         {
-//             (Client as jest.Mock).mockImplementationOnce(() =>
-//             {
-//                 throw new Error("Connection error");
-//             });
-//             const consoleErrorSpy = jest.spyOn(console, "error");
-//             await elasticIO.initialize();
-//             expect(consoleErrorSpy).toHaveBeenCalledWith("Error connecting to elasticsearch database");
-//         });
-//     });
-
-//     describe("disconnect", () =>
-//     {
-//         it("should close Elasticsearch client connection if client is defined", async () =>
-//         {
-//             elasticIO["elasticsearchClient"] = {
-//                 close: jest.fn().mockResolvedValue(undefined)
-//             } as unknown as Client;
-
-//             await elasticIO.disconnect(mockConfig);
-//             expect(elasticIO["elasticsearchClient"]!.close).toHaveBeenCalled();
-//         });
-
-//         it("should not close client if client is not defined", async () =>
-//         {
-//             const consoleWarnSpy = jest.spyOn(console, "error");
-//             await elasticIO.disconnect(mockConfig);
-//             expect(consoleWarnSpy).toHaveBeenCalledWith("Trying to disconnect nonexistent connection");
-//         });
-//     });
-
-// });
+    test('test elastic query', async () => {
+        const query = { query: { match: { lastName: "Smith" } } };
+        const results = await elastic.search(query);
+        expect(results).toHaveProperty("hits");
+        expect(results.hits).toBeInstanceOf(Object);
+        expect(results.hits).toHaveProperty("hits");
+        expect(results.hits.hits).toBeInstanceOf(Array);
+        expect(results.hits.hits.length).toBe(10);
+    });
+});
