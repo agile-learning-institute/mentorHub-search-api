@@ -1,10 +1,8 @@
 # mentorhub-search-api
-# DISCLAIMER
-The Opensearch container is quite big, roughly 1.3 GB. This might present a problem for those on a metered connection looking to contribute.
 
 ## Overview
 
-This is a simple Typescript API that provides search results from the search database. This API uses data from a [backing Opensearch Database](https://github.com/agile-learning-institute/mentorHub-search-opensearch).
+This is a simple Typescript API that provides search results from the search database. This API uses data from a [backing Elasticsearch Database](https://github.com/agile-learning-institute/mentorHub-elasticsearch).
 
 The OpenAPI specifications for the API can be found in the ``docs`` folder, and are served [here](https://agile-learning-institute.github.io/mentorHub-search-api/)
 
@@ -42,7 +40,7 @@ npm run container
 ```bash
 npm run stepci
 ```
-NOTE: This assumes that the API is running at localhost:8081. You can acomplish this with ``npm run start`` or ``npm run container``
+NOTE: This assumes that the API is running at localhost:8081. You can accomplish this with ``npm run start`` or ``npm run container``
 
 ## Local API Testing with CURL
 In addition to the stepci API testing above, you can use regular curl commands to test the API. 
