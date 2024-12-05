@@ -17,12 +17,18 @@ paths:
     get:
       summary: Search Elasticsearch database
       parameters:
-        - name: query
-          in: header
-          description: "Search query value"
-          required: true
+        - name: search
+          in: query
+          description: "Simple full-text search string"
+          required: false
           schema:
             type: string
+        - name: query
+          in: query
+          description: "Elasticsearch query object"
+          required: false
+          schema:
+            type: object
       responses:
         '200':
           description: Successful response
