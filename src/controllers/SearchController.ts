@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
-import ElasticIO from "../store/ElasticIO";
-import IndexCard from "../interfaces/IndexCard";
+import SearchService from "../services/SearchService";
+import ElasticIO from '../store/ElasticIO';
+import Token from './Token';
 
 export default class SearchController {
     private elastic: ElasticIO;
@@ -10,17 +11,18 @@ export default class SearchController {
     }
 
     public getIndexCards = async (req: Request, res: Response) => {
-        let results: IndexCard[];
+        let results = [];
     
         try {
-          results = await this.elastic.search(req.headers.query);
+          let token = new Token(req.header);
+          results = await SearchService.search(req.query, token, this.elastic);
           res.json(results);
           res.status(200);
           console.info("Search Completed");
         } catch (error) {
           res.json({error: error});
           res.status(500);
-          console.info("Search Failed");
+          console.info("Search Failed", error);
         }
     }
 }

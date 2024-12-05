@@ -1,61 +1,56 @@
-/**
- * This set of unit tests test controller init from env
- */
-import MongoInterface from '../interfaces/MongoInterface';
-import PeopleController from './PeopleController';
+import SearchController from './SearchController';
 import { Request, Response } from 'express';
+import SearchService from "../services/SearchService";
+import ElasticIO from '../store/ElasticIO';
+import Token from './Token';
+
+// Mock dependencies
+jest.mock('../store/ElasticIO'); 
+jest.mock('../services/SearchService');
 
 const mockRequest = (options = {}): Partial<Request> => ({
   ...options,
+  query: {}, // Default query object
+  header: jest.fn(), // Mock header method
 });
 
 const mockResponse = (): Partial<Response> & { json: jest.Mock } => {
   const res: any = {};
-  res.send = jest.fn().mockReturnThis();
-  res.status = jest.fn().mockReturnThis();
   res.json = jest.fn().mockReturnThis();
+  res.status = jest.fn().mockReturnThis();
   return res as Partial<Response> & { json: jest.Mock };
 };
 
-const mockMongoIO = (): MongoInterface => {
-  return {
-    connect: jest.fn(),
-    disconnect: jest.fn(),
-    findPeople: jest.fn(),
-    findPartners: jest.fn(),
-    findPartner: jest.fn(),
-    insertPartner: jest.fn(),
-    updatePartner: jest.fn(),
-    addContact: jest.fn(),
-    removeContact: jest.fn(),
-    loadVersions: jest.fn(),
-    loadEnumerators: jest.fn()
-  };
-};
+describe('SearchController', () => {
+  let searchController: SearchController;
+  let mockElastic: ElasticIO;
+  let req: Partial<Request>;
+  let res: Partial<Response>;
 
-describe('PeopleController', () => {
-  let peopleController: PeopleController;
-
-  beforeEach(async () => {
-    const mockMongo = mockMongoIO();
-    peopleController = new PeopleController(mockMongo);
+  beforeEach(() => {
+    mockElastic = new ElasticIO();
+    searchController = new SearchController(mockElastic);
+    req = mockRequest();
+    res = mockResponse();
+    (SearchService.search as jest.Mock).mockResolvedValue([{ id: 1, name: "Test Card" }]);
   });
 
-  afterEach(async () => {
-  });
+  test('getIndexCards should return results and set status 200', async () => {
+    await searchController.getIndexCards(req as Request, res as Response);
 
-  test('test getPeople', async () => {
-    const data = [{ message: 'Get Partner list' }];
-    const req = mockRequest({});
-    const res = mockResponse();
-
-    (peopleController.mongo.findPeople as jest.Mock).mockResolvedValue(data);
-    await peopleController.getPeople(req as Request, res as Response);
-
-    const jsonResponse = res.json.mock.calls[0][0];
-    expect(Array.isArray(jsonResponse)).toBeTruthy();
-    expect(jsonResponse.length).toBeGreaterThan(0);
-    expect(jsonResponse[0].message).toBe("Get Partner list");
+    expect(SearchService.search).toHaveBeenCalledWith(req.query, expect.any(Token), mockElastic);
     expect(res.status).toHaveBeenCalledWith(200);
+    expect(res.json).toHaveBeenCalledWith([{ id: 1, name: "Test Card" }]);
+  });
+
+  test('getIndexCards should handle errors and set status 500', async () => {
+    // Mock SearchService.search to throw an error
+    (SearchService.search as jest.Mock).mockRejectedValue(new Error("Search error"));
+
+    await searchController.getIndexCards(req as Request, res as Response);
+
+    // Assert that the error was handled and status 500 was set
+    expect(res.status).toHaveBeenCalledWith(500);
+    expect(res.json).toHaveBeenCalledWith({ error: new Error("Search error") });
   });
 });
