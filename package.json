@@ -8,7 +8,7 @@
     "local": "tsc; node ./dist/server.js",
     "stepci": "stepci run ./test/search-stepci.yaml",
     "precontainer": "docker build --tag ghcr.io/agile-learning-institute/mentorhub-search-api:latest .",
-    "container": "mh up search-api",
+    "container": "mh down; mh up search-api",
     "test": "jest --coverage"
   },
   "devDependencies": {

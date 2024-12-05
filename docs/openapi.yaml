@@ -77,8 +77,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Config'     
-  
-
 components:
   schemas:
     SearchResponse:
@@ -95,18 +93,14 @@ components:
           _source:
             type: object
             additionalProperties: true
-            description: Dynamic keys/fields allowed
+            description: Additional properties vary depending on collection_name, see https://agile-learning-institute.github.io/mentorHub-mongodb/ 
             properties:
-              name:
+              collection_id:
                 type: string
-              status: 
+              collection_name: 
                 type: string
-              ID:
-                type: string
-              collection:
-                type: string
-              
-              
+              lastSaved:
+                type: object
     Config:
       type: object
       properties:
@@ -131,4 +125,20 @@ components:
                   - default
                   - environment
                   - file
+        token:
+          description: Access token used in /config api call
+          type: object
+          properties:
+            user_id:
+              description: Logged in user_id value
+              type: string
+            from_ip:
+              description: User's current IP address
+              type: string
+            roles:
+              description: User's RBAC roles
+              type: array
+              items:
+                type: string
+
 

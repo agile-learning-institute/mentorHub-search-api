@@ -15,11 +15,10 @@ export default class SearchController {
     
         try {
           let token = new Token(req.header);
-          console.info("Search Query", JSON.stringify(req.query));
           results = await SearchService.search(req.query, token, this.elastic);
           res.json(results);
           res.status(200);
-          console.info("Search Completed");
+          console.info("Search Completed", req.query);
         } catch (error) {
           res.json({error: error});
           res.status(500);
