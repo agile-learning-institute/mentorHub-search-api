@@ -1,3 +1,4 @@
+import { error } from "console";
 import config from "../config/Config";
 import Token from "../controllers/Token";
 import ElasticIO from "../store/ElasticIO";
@@ -20,6 +21,7 @@ export default class SearchService {
 
         // Throw error if neither key is present
         } else {
+            console.error("Query Failed with error ", error);
             throw new Error("Missing required parameter: 'query' or 'search' must be provided.");
         }
 

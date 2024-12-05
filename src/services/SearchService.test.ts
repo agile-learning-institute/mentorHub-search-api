@@ -11,7 +11,7 @@ describe('SearchService', () => {
     let mockToken: jest.Mocked<Token>;
 
     beforeEach(() => {
-        mockElastic = new ElasticIO() as jest.Mocked<ElasticIO>;
+        mockElastic = new ElasticIO("") as jest.Mocked<ElasticIO>;
         mockElastic.search = jest.fn();
         const mockHeader = jest.fn((name: string) => undefined); 
         mockToken = new Token(mockHeader) as jest.Mocked<Token>;

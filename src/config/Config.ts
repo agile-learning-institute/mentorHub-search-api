@@ -26,7 +26,7 @@ export  class Config {
     #connectionSettings: any = {};
 
     // Default connection string for locally hosted database
-    #defaultConnectionString: string = '{"node":"http://@localhost:9200"}'; 
+    #defaultConnectionString: string = '{"node":"http://localhost:9200"}'; 
 
     /**
      * Constructor gets configuration values, loads the enumerators, and logs completion

@@ -28,7 +28,7 @@ describe('SearchController', () => {
   let res: Partial<Response>;
 
   beforeEach(() => {
-    mockElastic = new ElasticIO();
+    mockElastic = new ElasticIO("");
     searchController = new SearchController(mockElastic);
     req = mockRequest();
     res = mockResponse();

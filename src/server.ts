@@ -12,12 +12,12 @@ export class Server {
     private elastic: ElasticIO;
 
     constructor() {
-        this.elastic = new ElasticIO();
-        // this.elastic.connect();
+        this.elastic = new ElasticIO(config.getConnectionSettings());
+        this.elastic.connect();
     }
 
     public async serve() {
-        // Initilize express app
+        // Initialize express app
         const app = express();
         app.use(express.json());
 

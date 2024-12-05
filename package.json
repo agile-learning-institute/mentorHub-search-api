@@ -3,8 +3,9 @@
   "description": "This is the API used to support search use cases in the mentorhub system",
   "scripts": {
     "build": "tsc",
-    "prestart": "tsc; mh down, mh up elasticsearch",
-    "start": "node ./dist/server.js",
+    "prestart": "mh down, mh up elasticsearch",
+    "start": "npm run local",
+    "local": "tsc; node ./dist/server.js",
     "stepci": "stepci run ./test/search-stepci.yaml",
     "precontainer": "docker build --tag ghcr.io/agile-learning-institute/mentorhub-search-api:latest .",
     "container": "mh up search-api",
