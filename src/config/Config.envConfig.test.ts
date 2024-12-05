@@ -43,7 +43,7 @@ describe('Config', () => {
 
     // Test that a configuration value was properly loaded from an environment variable
     function testConfigEnvironmentValue(configName: string, secret: boolean = false) {
-        process.env[configName] = "ENVIRONMENT";
+        process.env[configName] = '"ENVIRONMENT"';
         config.initialize();
         process.env[configName] = "";
 
@@ -57,7 +57,7 @@ describe('Config', () => {
             if (secret) {
                 expect(item.value).toBe("secret");
             } else {
-                expect(item.value).toBe("ENVIRONMENT");
+                expect(item.value).toBe('"ENVIRONMENT"');
             }
         }
     }

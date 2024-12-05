@@ -36,5 +36,7 @@ describe('ConfigController', () => {
     expect(jsonResponse).toHaveProperty('configItems');
     expect(jsonResponse).toHaveProperty('apiVersion');
     expect(jsonResponse.apiVersion).toEqual("1.2.LOCAL");
+    expect(jsonResponse).toHaveProperty('token');
+    expect(jsonResponse.token.user_id).toEqual("AAAA00000000000000000000");
   });
 });

@@ -1,11 +1,12 @@
 /**
  * Class Config: This class manages configuration values 
- *      from the enviornment or configuration files, 
+ *      from the environment or configuration files, 
  *      and provides all data for the /config endpoint
  */
 
 import { existsSync, readFileSync } from "fs";
 import { join } from 'path';
+import Token from "../controllers/Token";
 
 interface ConfigItem {
     name: string;
@@ -22,10 +23,10 @@ export  class Config {
     // Private Properties
     #configFolder: string = "./";
     #port: number = 8084;
-    #connectionString: string = "";
+    #connectionSettings: any = {};
 
     // Default connection string for locally hosted database
-    #defaultConnectionString: string = '{"node":"https://@mentorhub-searchdb:9200","auth":{"username":"elastic","password":"o0=eLmmQbsrdEW89a-Id"},"tls":{"ca":"","rejectUnauthorized":false}}'; 
+    #defaultConnectionString: string = '{"node":"https://@mentorhub-searchdb:9200"}'; 
 
     /**
      * Constructor gets configuration values, loads the enumerators, and logs completion
@@ -35,21 +36,21 @@ export  class Config {
     }
 
     public initialize() {      
-        // Initilze Values
+        // Initialize Values
         this.configItems = [];
         this.apiVersion = "1.2." + this.getConfigValue("BUILT_AT", "LOCAL", false);
         this.#configFolder = this.getConfigValue("CONFIG_FOLDER", "/opt/mentorhub-search-api", false);
         this.#port = parseInt(this.getConfigValue("API_PORT", "8081", false));
-        this.#connectionString = this.getConfigValue("CONNECTION_STRING", this.#defaultConnectionString, true);
+        this.#connectionSettings = JSON.parse(this.getConfigValue("CONNECTION_STRING", this.#defaultConnectionString, true));
 
-        // Initilize Config values that only used by the UI
+        // Initialize Config values that only used by the UI
         this.getConfigValue("PERSON_HOST", "localhost:8083", false);
         this.getConfigValue("PARTNER_HOST", "localhost:8085", false);
         this.getConfigValue("TOPIC_HOST", "localhost:8087", false);
         this.getConfigValue("CURRICULUM_HOST", "localhost:8089", false);
         this.getConfigValue("ENCOUNTER_HOST", "localhost:8091", false);
 
-        console.info("Configuration Initilized:", JSON.stringify(this.configItems));
+        console.info("Configuration Initialized:", JSON.stringify(this.configItems));
     }
 
     /**
@@ -106,8 +107,15 @@ export  class Config {
         return this.#configFolder;
     }
 
-    public getConnectionString(): string {
-        return this.#connectionString;
+    public getConnectionSettings(): any {
+        return this.#connectionSettings;
+    }
+
+    public withToken(token: Token): any {
+        return {
+            ...this,
+            token,
+        };    
     }
 }
 
