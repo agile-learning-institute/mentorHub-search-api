@@ -20,7 +20,7 @@ describe('Config', () => {
     });
 
     test('test getter for default getConnectionSettings', () => {
-        expect(config.getConnectionSettings()).toStrictEqual({"node":"https://@mentorhub-searchdb:9200"});
+        expect(config.getConnectionSettings()).toStrictEqual({"node":"http://@localhost:9200"});
         expect(getConfigValue( "CONNECTION_STRING")).toBe("secret");
     });
 
