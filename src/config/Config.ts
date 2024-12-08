@@ -22,7 +22,7 @@ export  class Config {
 
     // Private Properties
     #configFolder: string = "./";
-    #port: number = 8084;
+    #port: number = 0;
     #connectionSettings: any = {};
 
     // Default connection string for locally hosted database
