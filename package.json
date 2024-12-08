@@ -3,7 +3,7 @@
   "description": "This is the API used to support search use cases in the mentorhub system",
   "scripts": {
     "build": "tsc",
-    "prestart": "mh down, mh up elasticsearch",
+    "prestart": "mh down; mh up elasticsearch",
     "start": "npm run local",
     "local": "tsc; node ./dist/server.js",
     "stepci": "stepci run ./test/search-stepci.yaml",

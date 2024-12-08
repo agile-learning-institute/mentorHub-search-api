@@ -2,7 +2,7 @@ FROM node:21 AS build
 
 #Install git (for branch/patch info)
 WORKDIR /app
-COPY package*.json .
+COPY package*.json ./
 RUN npm install
 COPY . .
 RUN npm run build
@@ -13,10 +13,7 @@ RUN echo $(date "+%Y-%m-%d:%H:%M:%S") > ./dist/BUILT_AT
 # Final Stage
 FROM node:16 AS run
 
-# Default Environment Variable values
-# ENV CONNECTION_STRING={"node":"https://@mentorhub-searchdb:9200","auth":{"username":"elastic","password":"o0=eLmmQbsrdEW89a-Id"},"tls":{"ca":"","rejectUnauthorized":false}}
-#       see https://www.elastic.co/guide/en/elasticsearch/client/javascript-api/current/client-connecting.html
-# ENV API_PORT=8081
+# Default Environment Variable values in src/config/Config.ts
 
 # Copy built assets from build stage 
 RUN mkdir -p /opt/app && chown node:node /opt/app
