@@ -17,12 +17,18 @@ paths:
     get:
       summary: Search Elasticsearch database
       parameters:
-        - name: query
-          in: header
-          description: "Search query value"
-          required: true
+        - name: search
+          in: query
+          description: "Simple full-text search string"
+          required: false
           schema:
             type: string
+        - name: query
+          in: query
+          description: "Elasticsearch query object"
+          required: false
+          schema:
+            type: object
       responses:
         '200':
           description: Successful response
@@ -71,26 +77,30 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Config'     
-  
-
 components:
   schemas:
     SearchResponse:
       type: array
       items:
         type: object
-        additionalProperties: true
-        description: Dynamic keys/fields allowed
         properties:
-          name:
+          _index:
             type: string
-          status: 
+          _id:
             type: string
-          ID:
-            type: string
-          collection:
-            type: string
-              
+          _score:
+            type: number
+          _source:
+            type: object
+            additionalProperties: true
+            description: Additional properties vary depending on collection_name, see https://agile-learning-institute.github.io/mentorHub-mongodb/ 
+            properties:
+              collection_id:
+                type: string
+              collection_name: 
+                type: string
+              lastSaved:
+                type: object
     Config:
       type: object
       properties:
@@ -115,4 +125,20 @@ components:
                   - default
                   - environment
                   - file
+        token:
+          description: Access token used in /config api call
+          type: object
+          properties:
+            user_id:
+              description: Logged in user_id value
+              type: string
+            from_ip:
+              description: User's current IP address
+              type: string
+            roles:
+              description: User's RBAC roles
+              type: array
+              items:
+                type: string
+
 
