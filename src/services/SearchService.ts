@@ -1,5 +1,4 @@
 import { error } from "console";
-import config from "../config/Config";
 import Token from "../controllers/Token";
 import ElasticIO from "../store/ElasticIO";
 

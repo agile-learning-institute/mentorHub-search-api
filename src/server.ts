@@ -12,7 +12,7 @@ export class Server {
     private elastic: ElasticIO;
 
     constructor() {
-        this.elastic = new ElasticIO(config.getConnectionSettings());
+        this.elastic = new ElasticIO(config.ELASTIC_CLIENT_OPTIONS());
         this.elastic.connect();
     }
 
@@ -37,7 +37,7 @@ export class Server {
         app.get('/api/config/', (req, res) => configController.getConfig(req, res));
 
         // Start Server
-        const port = config.getPort();
+        const port = config.SEARCH_API_PORT;
         this.server = app.listen(port, () => {
             console.log(`Server running on port ${port}`);
         });

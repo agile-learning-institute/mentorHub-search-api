@@ -34,8 +34,7 @@ describe('ConfigController', () => {
     // Assert on the first argument of the first call to res.json
     const jsonResponse = res.json.mock.calls[0][0];
     expect(jsonResponse).toHaveProperty('configItems');
-    expect(jsonResponse).toHaveProperty('apiVersion');
-    expect(jsonResponse.apiVersion).toEqual("1.2.LOCAL");
+    expect(jsonResponse.BUILT_AT).toEqual("LOCAL");
     expect(jsonResponse).toHaveProperty('token');
     expect(jsonResponse.token.user_id).toEqual("AAAA00000000000000000000");
   });
