@@ -13,49 +13,71 @@ describe('Config', () => {
         process.env.CONFIG_FOLDER = "";
     });
 
-    test('test PORT', () => {
-        testConfigFileValue("API_PORT");
+    test('test fileStrings', () => {
+        const testScope = {
+            ...config.stringPropertyDefaults,
+            ...config.secretStringPropertyDefaults
+        };
+        for (const [key, defaultValue] of Object.entries(testScope)) {
+            if (key == "BUILT_AT") {
+                expect(config.BUILT_AT).toBe("LOCAL");
+            } else if (key == "CONFIG_FOLDER") {
+                expect(config.CONFIG_FOLDER).toBe("./test/configTest");
+            } else {
+                expect((config as any)[key]).toBe("TEST_VALUE");
+            }
+        }
     });
 
-    test('test CONNECTION_STRING', () => {
-        testConfigFileValue("CONNECTION_STRING", true);
+    test('test fileIntegers', () => {
+        for (const [key, defaultValue] of Object.entries(config.integerPropertyDefaults)) {
+            expect((config as any)[key]).toBe(9999);
+        }
     });
 
-    test('test PERSON_HOST', () => {
-        testConfigFileValue("PERSON_HOST");
+    test('test fileSecretJson', () => {
+        for (const [key, defaultValue] of Object.entries(config.secretJsonPropertyDefaults)) {
+            expect((config as any)[key]).toStrictEqual({"foo":"bat"});
+        }
     });
 
-    test('test PARTNER_HOST', () => {
-        testConfigFileValue("PARTNER_HOST");
+    test('test fileConfigItemStringDefaults', () => {
+        for (const [key, defaultValue] of Object.entries(config.stringPropertyDefaults)) {
+            if (key == "BUILT_AT") {
+                testConfigItemValue(key, "LOCAL", "default");
+            } else if (key == "CONFIG_FOLDER") {
+                testConfigItemValue(key, "./test/configTest", "environment");
+            } else {
+                testConfigItemValue(key, "TEST_VALUE", "file");
+            }
+        }
     });
 
-    test('test TOPIC_HOST', () => {
-        testConfigFileValue("TOPIC_HOST");
+    test('test fileConfigItemIntegerDefaults', () => {
+        for (const [key, defaultValue] of Object.entries(config.integerPropertyDefaults)) {
+            testConfigItemValue(key, "9999", "file")
+        }
     });
 
-    test('test CURRICULUM_HOST', () => {
-        testConfigFileValue("CURRICULUM_HOST");
+    test('test fileConfigItemSecretDefaults', () => {
+        const testScope = {
+            ...config.secretJsonPropertyDefaults,
+            ...config.secretStringPropertyDefaults
+        }
+        for (const [key, defaultValue] of Object.entries(testScope)) {
+            testConfigItemValue(key, "secret", "file")
+        }
     });
 
-    test('test ENCOUNTER_HOST', () => {
-        testConfigFileValue("ENCOUNTER_HOST");
-    });
-
-    // Test that a file based config value is used
-    // Depends on the contents of ../../test/configTest
-    function testConfigFileValue(configName: string, secret: boolean = false) {
+    function testConfigItemValue(configName: string, expectedValue: string, expectedFrom: string) {
         const items = config.configItems;
-
         const item = items.find(i => i.name === configName);
         expect(item).toBeDefined();
         if (item) {
             expect(item.name).toBe(configName);
-            expect(item.from).toBe("file");
-            if (secret) {
-                expect(item.value).toBe("secret");
-            } else {
-                expect(item.value).toBe("TEST_VALUE");
-            }
+            expect(item.from).toBe(expectedFrom);
+            expect(item.value).toBe(expectedValue);
         }
     }
+
 });
