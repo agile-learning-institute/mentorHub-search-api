@@ -12,7 +12,7 @@ export class Server {
     private elastic: ElasticIO;
 
     constructor() {
-        this.elastic = new ElasticIO(config.ELASTIC_CLIENT_OPTIONS());
+        this.elastic = new ElasticIO(config.ELASTIC_CLIENT_OPTIONS);
         this.elastic.connect();
     }
 

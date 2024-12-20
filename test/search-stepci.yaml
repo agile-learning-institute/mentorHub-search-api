@@ -17,13 +17,10 @@ tests:
               properties:
                 configItems:
                   type: array
-                apiVersion:
-                  type: string
                 token:
                   type: object
               required:
                 - configItems
-                - apiVersion
                 - token
               additionalProperties: false
       - name: GET Health

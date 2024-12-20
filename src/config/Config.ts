@@ -171,8 +171,8 @@ export  class Config {
 
     public withToken(token: Token): any {
         return {
-            ...this,
-            token,
+            "configItems": this.configItems,
+            "token": token
         };    
     }
 }
