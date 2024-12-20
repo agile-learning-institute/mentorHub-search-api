@@ -6,8 +6,6 @@
 
 import { existsSync, readFileSync } from "fs";
 import { join } from 'path';
-import Token from "../controllers/Token";
-import { integer } from "@elastic/elasticsearch/lib/api/types";
 
 interface ConfigItem {
     name: string;
@@ -42,12 +40,12 @@ export  class Config {
     SEARCH_UI_URI: string = '';
     ELASTIC_INDEX_NAME: string = "";
     MONGO_CONNECTION_STRING: string = "";
-    CURRICULUM_API_PORT: integer = 0;
-    ENCOUNTER_API_PORT: integer = 0;
-    PARTNERS_API_PORT: integer = 0;
-    PEOPLE_API_PORT: integer = 0;
-    TOPICS_API_PORT: integer = 0;
-    SEARCH_API_PORT: integer = 0;
+    CURRICULUM_API_PORT: number = 0;
+    ENCOUNTER_API_PORT: number = 0;
+    PARTNERS_API_PORT: number = 0;
+    PEOPLE_API_PORT: number = 0;
+    TOPICS_API_PORT: number = 0;
+    SEARCH_API_PORT: number = 0;
     ELASTIC_CLIENT_OPTIONS: any = {};
 
     // Default values
@@ -169,7 +167,7 @@ export  class Config {
     }
 
 
-    public withToken(token: Token): any {
+    public withToken(token: any): any {
         return {
             "configItems": this.configItems,
             "token": token
