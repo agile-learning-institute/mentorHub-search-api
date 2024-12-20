@@ -62,6 +62,12 @@ NOTE: This assumes backing services and the API are running, either locally or i
 npm run stepci
 ```
 
+### Run performance/load testing
+NOTE: This assumes backing services and the API are running, either locally or in a container
+```bash
+npm run load
+```
+
 ## Local API Testing with CURL
 In addition to the stepci API testing above, you can use regular curl commands to test the API. 
 
