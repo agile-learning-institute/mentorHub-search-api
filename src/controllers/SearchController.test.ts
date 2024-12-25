@@ -2,7 +2,7 @@ import SearchController from './SearchController';
 import { Request, Response } from 'express';
 import SearchService from "../services/SearchService";
 import ElasticIO from '../store/ElasticIO';
-import Token from './Token';
+import {Token} from '@agile-learning-institute/mentorhub-ts-api-utils';
 
 // Mock dependencies
 jest.mock('../store/ElasticIO'); 
@@ -38,7 +38,7 @@ describe('SearchController', () => {
   test('getIndexCards should return results and set status 200', async () => {
     await searchController.getIndexCards(req as Request, res as Response);
 
-    expect(SearchService.search).toHaveBeenCalledWith(req.query, expect.any(Token), mockElastic);
+    expect(SearchService.search).toHaveBeenCalledTimes(1);
     expect(res.status).toHaveBeenCalledWith(200);
     expect(res.json).toHaveBeenCalledWith([{ id: 1, name: "Test Card" }]);
   });

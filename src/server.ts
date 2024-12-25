@@ -1,8 +1,7 @@
 import express from 'express';
 import http from 'http';
-import config from './config/Config';
+import {Config, ConfigController} from '@agile-learning-institute/mentorhub-ts-api-utils';
 import SearchController from './controllers/SearchController';
-import ConfigController from './controllers/ConfigController';
 import promBundle from 'express-prom-bundle'; 
 import ElasticIO from './store/ElasticIO';
 import e from 'express';
@@ -10,9 +9,11 @@ import e from 'express';
 export class Server {
     private server?: http.Server;
     private elastic: ElasticIO;
+    private config: Config;
 
     constructor() {
-        this.elastic = new ElasticIO(config.ELASTIC_CLIENT_OPTIONS);
+        this.config = Config.getInstance();
+        this.elastic = new ElasticIO(this.config.ELASTIC_CLIENT_OPTIONS);
         this.elastic.connect();
     }
 
@@ -37,7 +38,7 @@ export class Server {
         app.get('/api/config/', (req, res) => configController.getConfig(req, res));
 
         // Start Server
-        const port = config.SEARCH_API_PORT;
+        const port = this.config.SEARCH_API_PORT;
         this.server = app.listen(port, () => {
             console.log(`Server running on port ${port}`);
         });

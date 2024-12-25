@@ -28,6 +28,7 @@
     "webpack-cli": "^5.1.4"
   },
   "dependencies": {
+    "@agile-learning-institute/mentorhub-ts-api-utils": "^1.0.6",
     "@elastic/elasticsearch": "^8.13.1",
     "dotenv": "^16.4.5",
     "envalid": "^8.0.0",

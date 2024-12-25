@@ -1,20 +1,18 @@
-import Token from '../controllers/Token';
+import { Token, decodeToken } from '@agile-learning-institute/mentorhub-ts-api-utils';
 import ElasticIO from '../store/ElasticIO';
 import SearchService from './SearchService';
 
 // Mock dependencies
 jest.mock('../store/ElasticIO'); 
-jest.mock('../controllers/Token');
 
 describe('SearchService', () => {
     let mockElastic: jest.Mocked<ElasticIO>;
-    let mockToken: jest.Mocked<Token>;
+    let mockToken: Token;
 
     beforeEach(() => {
+        mockToken = {"userId":"","roles":["Staff"]}
         mockElastic = new ElasticIO("") as jest.Mocked<ElasticIO>;
         mockElastic.search = jest.fn();
-        const mockHeader = jest.fn((name: string) => undefined); 
-        mockToken = new Token(mockHeader) as jest.Mocked<Token>;
     });
 
     test('test simple search', async () => {

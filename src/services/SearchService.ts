@@ -1,5 +1,5 @@
 import { error } from "console";
-import Token from "../controllers/Token";
+import { Token } from '@agile-learning-institute/mentorhub-ts-api-utils';
 import ElasticIO from "../store/ElasticIO";
 
 export default class SearchService {

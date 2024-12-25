@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import SearchService from "../services/SearchService";
 import ElasticIO from '../store/ElasticIO';
-import Token from './Token';
+import {decodeToken} from '@agile-learning-institute/mentorhub-ts-api-utils';
 
 export default class SearchController {
     private elastic: ElasticIO;
@@ -14,7 +14,7 @@ export default class SearchController {
         let results = [];
     
         try {
-          let token = new Token(req.header);
+          const token = decodeToken(req);
           results = await SearchService.search(req.query, token, this.elastic);
           res.json(results);
           res.status(200);
