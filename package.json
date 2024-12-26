@@ -7,6 +7,7 @@
     "start": "npm run local",
     "local": "tsc; node ./dist/server.js",
     "stepci": "stepci run ./test/search-stepci.yaml",
+    "load": "stepci run ./test/search-stepci.yaml --loadtest",
     "precontainer": "docker build --tag ghcr.io/agile-learning-institute/mentorhub-search-api:latest .",
     "container": "mh down; mh up search-api",
     "test": "jest --coverage"
@@ -27,6 +28,7 @@
     "webpack-cli": "^5.1.4"
   },
   "dependencies": {
+    "@agile-learning-institute/mentorhub-ts-api-utils": "^1.0.6",
     "@elastic/elasticsearch": "^8.13.1",
     "dotenv": "^16.4.5",
     "envalid": "^8.0.0",

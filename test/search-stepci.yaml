@@ -2,6 +2,11 @@ version: "1.1"
 name: Search API Check
 env:
   host: localhost:8081
+config:
+  loadTest:
+    phases:
+      - duration: 5
+        arrivalRate: 50  
 tests:
   observable:
     name: Test Observability
@@ -17,13 +22,10 @@ tests:
               properties:
                 configItems:
                   type: array
-                apiVersion:
-                  type: string
                 token:
                   type: object
               required:
                 - configItems
-                - apiVersion
                 - token
               additionalProperties: false
       - name: GET Health

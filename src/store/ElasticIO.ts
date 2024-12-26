@@ -1,12 +1,13 @@
 import { Client } from "@elastic/elasticsearch";
 import { exit } from "process";
-import config from "../config/Config";
 
 export default class ElasticIO {
     private elasticSearchClient: Client;
+    private clientOptions: any;
 
     constructor(clientOptions: any) {
-        this.elasticSearchClient = new Client(clientOptions)
+        this.clientOptions = clientOptions;
+        this.elasticSearchClient = new Client(clientOptions);
         return;
     }
 
@@ -15,7 +16,7 @@ export default class ElasticIO {
         try {
             console.log("Connected", JSON.stringify(await this.elasticSearchClient.ping()));
         } catch (error) {
-            console.error("Error connecting to elasticsearch database", JSON.stringify(config.getConnectionSettings()), JSON.stringify(error));
+            console.error("Error connecting to elasticsearch database", JSON.stringify(this.clientOptions), JSON.stringify(error));
             exit(1);    // FAIL FAST
         }
     }
